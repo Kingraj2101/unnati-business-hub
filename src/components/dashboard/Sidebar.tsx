@@ -12,7 +12,11 @@ import {
   TrendingUp,
   Truck,
   ChevronRight,
-  LayoutDashboard
+  LayoutDashboard,
+  DollarSign,
+  LifeBuoy,
+  Factory,
+  Store
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,19 +28,24 @@ interface SidebarProps {
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   const menuItems = [
     {
-      title: "Dashboard",
+      title: "Main Dashboard",
       icon: <LayoutDashboard size={20} />,
       path: "/dashboard",
+    },
+    {
+      title: "Billing Desk",
+      icon: <FileText size={20} />,
+      path: "/dashboard/billing",
+    },
+    {
+      title: "Accounting",
+      icon: <DollarSign size={20} />,
+      path: "/dashboard/accounting",
     },
     {
       title: "Inventory",
       icon: <Package size={20} />,
       path: "/dashboard/inventory",
-    },
-    {
-      title: "Billing",
-      icon: <FileText size={20} />,
-      path: "/dashboard/billing",
     },
     {
       title: "Expenses",
@@ -45,8 +54,18 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
     {
       title: "Factory Stock",
-      icon: <ShoppingCart size={20} />,
+      icon: <Factory size={20} />,
       path: "/dashboard/factory-stock",
+    },
+    {
+      title: "Retail Store",
+      icon: <Store size={20} />,
+      path: "/dashboard/retail",
+    },
+    {
+      title: "After-Sales Service",
+      icon: <LifeBuoy size={20} />,
+      path: "/dashboard/service",
     },
     {
       title: "Suppliers",
@@ -100,7 +119,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
           </button>
         </div>
 
-        <div className="p-4">
+        <div className="p-4 overflow-y-auto h-[calc(100vh-4rem)]">
           <nav className="space-y-1">
             {menuItems.map((item) => (
               <NavLink

@@ -13,6 +13,10 @@ import Contact from "./pages/Contact";
 import Franchise from "./pages/Franchise";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import BillingDashboard from "./pages/BillingDashboard";
+import AccountingDashboard from "./pages/AccountingDashboard"; 
+import InventoryDashboard from "./pages/InventoryDashboard";
+import ServiceDashboard from "./pages/ServiceDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +35,10 @@ const App = () => (
           <Route path="/franchise" element={<Franchise />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/billing" element={<BillingDashboard />} />
+          <Route path="/dashboard/accounting" element={<AccountingDashboard />} />
+          <Route path="/dashboard/inventory" element={<InventoryDashboard />} />
+          <Route path="/dashboard/service" element={<ServiceDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

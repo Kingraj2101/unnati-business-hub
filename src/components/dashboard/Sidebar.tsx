@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -16,7 +15,13 @@ import {
   DollarSign,
   LifeBuoy,
   Factory,
-  Store
+  Store,
+  ShoppingBag,
+  Box,
+  CreditCard,
+  Tool,
+  CircleDollarSign,
+  CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +31,10 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
-  const menuItems = [
+  const userType = localStorage.getItem("userType") || "admin";
+
+  // Admin Menu Items
+  const adminMenuItems = [
     {
       title: "Main Dashboard",
       icon: <LayoutDashboard size={20} />,
@@ -89,6 +97,168 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
   ];
 
+  // Store Menu Items
+  const storeMenuItems = [
+    {
+      title: "Store Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      path: "/store-dashboard",
+    },
+    {
+      title: "Sales & Billing",
+      icon: <ShoppingCart size={20} />,
+      path: "/store-dashboard/sales",
+    },
+    {
+      title: "Inventory",
+      icon: <Package size={20} />,
+      path: "/store-dashboard/inventory",
+    },
+    {
+      title: "Customers",
+      icon: <Users size={20} />,
+      path: "/store-dashboard/customers",
+    },
+    {
+      title: "Order Management",
+      icon: <ShoppingBag size={20} />,
+      path: "/store-dashboard/orders",
+    },
+    {
+      title: "Payments",
+      icon: <CreditCard size={20} />,
+      path: "/store-dashboard/payments",
+    },
+    {
+      title: "After-Sales Service",
+      icon: <LifeBuoy size={20} />,
+      path: "/store-dashboard/service",
+    },
+    {
+      title: "Reports",
+      icon: <BarChart3 size={20} />,
+      path: "/store-dashboard/reports",
+    },
+    {
+      title: "Settings",
+      icon: <Settings size={20} />,
+      path: "/store-dashboard/settings",
+    },
+  ];
+
+  // Vendor Menu Items
+  const vendorMenuItems = [
+    {
+      title: "Vendor Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      path: "/vendor-dashboard",
+    },
+    {
+      title: "Orders",
+      icon: <ShoppingBag size={20} />,
+      path: "/vendor-dashboard/orders",
+    },
+    {
+      title: "Deliveries",
+      icon: <Truck size={20} />,
+      path: "/vendor-dashboard/deliveries",
+    },
+    {
+      title: "Products",
+      icon: <Package size={20} />,
+      path: "/vendor-dashboard/products",
+    },
+    {
+      title: "Payments",
+      icon: <CreditCard size={20} />,
+      path: "/vendor-dashboard/payments",
+    },
+    {
+      title: "Invoices",
+      icon: <FileText size={20} />,
+      path: "/vendor-dashboard/invoices",
+    },
+    {
+      title: "Reports",
+      icon: <BarChart3 size={20} />,
+      path: "/vendor-dashboard/reports",
+    },
+    {
+      title: "Settings",
+      icon: <Settings size={20} />,
+      path: "/vendor-dashboard/settings",
+    },
+  ];
+
+  // Factory Menu Items
+  const factoryMenuItems = [
+    {
+      title: "Factory Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      path: "/factory-dashboard",
+    },
+    {
+      title: "Production",
+      icon: <Factory size={20} />,
+      path: "/factory-dashboard/production",
+    },
+    {
+      title: "Raw Materials",
+      icon: <Box size={20} />,
+      path: "/factory-dashboard/materials",
+    },
+    {
+      title: "Inventory",
+      icon: <Package size={20} />,
+      path: "/factory-dashboard/inventory",
+    },
+    {
+      title: "Workers",
+      icon: <Users size={20} />,
+      path: "/factory-dashboard/workers",
+    },
+    {
+      title: "Maintenance",
+      icon: <Tool size={20} />,
+      path: "/factory-dashboard/maintenance",
+    },
+    {
+      title: "Expenses",
+      icon: <CircleDollarSign size={20} />,
+      path: "/factory-dashboard/expenses",
+    },
+    {
+      title: "Quality Control",
+      icon: <CheckCircle2 size={20} />,
+      path: "/factory-dashboard/quality",
+    },
+    {
+      title: "Reports",
+      icon: <BarChart3 size={20} />,
+      path: "/factory-dashboard/reports",
+    },
+    {
+      title: "Settings",
+      icon: <Settings size={20} />,
+      path: "/factory-dashboard/settings",
+    },
+  ];
+
+  // Determine which menu items to show based on user type
+  let menuItems = adminMenuItems;
+  let dashboardTitle = "Unnati Traders";
+  
+  if (userType === "store") {
+    menuItems = storeMenuItems;
+    dashboardTitle = "Retail Store";
+  } else if (userType === "vendor") {
+    menuItems = vendorMenuItems;
+    dashboardTitle = "Vendor Portal";
+  } else if (userType === "factory") {
+    menuItems = factoryMenuItems;
+    dashboardTitle = "Factory Management";
+  }
+
   return (
     <>
       {/* Mobile overlay */}
@@ -107,8 +277,8 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
         )}
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-unnati-dark">
-          <NavLink to="/dashboard" className="flex items-center">
-            <span className="font-bold text-xl">Unnati Traders</span>
+          <NavLink to={userType === "admin" ? "/dashboard" : `/${userType}-dashboard`} className="flex items-center">
+            <span className="font-bold text-xl">{dashboardTitle}</span>
           </NavLink>
           
           <button

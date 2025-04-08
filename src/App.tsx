@@ -20,6 +20,11 @@ import ServiceDashboard from "./pages/ServiceDashboard";
 import StoreDashboard from "./pages/StoreDashboard";
 import VendorDashboard from "./pages/VendorDashboard";
 import FactoryDashboard from "./pages/FactoryDashboard";
+import ExpensesDashboard from "./pages/ExpensesDashboard";
+import FactoryStockDashboard from "./pages/FactoryStockDashboard";
+import RetailDashboard from "./pages/RetailDashboard";
+import SuppliersDashboard from "./pages/SuppliersDashboard";
+import ReportsDashboard from "./pages/ReportsDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +47,11 @@ const App = () => (
           <Route path="/dashboard/accounting" element={<AccountingDashboard />} />
           <Route path="/dashboard/inventory" element={<InventoryDashboard />} />
           <Route path="/dashboard/service" element={<ServiceDashboard />} />
+          <Route path="/dashboard/expenses" element={<ExpensesDashboard />} />
+          <Route path="/dashboard/factory-stock" element={<FactoryStockDashboard />} />
+          <Route path="/dashboard/retail" element={<RetailDashboard />} />
+          <Route path="/dashboard/suppliers" element={<SuppliersDashboard />} />
+          <Route path="/dashboard/reports" element={<ReportsDashboard />} />
           <Route path="/store-dashboard" element={<StoreDashboard />} />
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
           <Route path="/factory-dashboard" element={<FactoryDashboard />} />

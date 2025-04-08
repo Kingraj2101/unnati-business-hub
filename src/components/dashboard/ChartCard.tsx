@@ -3,7 +3,7 @@ import React from "react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, LineChart, Line,
-  PieChart, Pie, Cell
+  PieChart, Pie, Cell, Legend
 } from "recharts";
 
 interface ChartCardProps {
@@ -103,6 +103,11 @@ const ChartCard = ({ title, type, data, className }: ChartCardProps) => {
                   borderRadius: '0.375rem',
                   boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
                 }}
+              />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
               />
             </PieChart>
           )}

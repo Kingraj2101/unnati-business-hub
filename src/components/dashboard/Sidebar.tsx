@@ -19,7 +19,7 @@ import {
   ShoppingBag,
   Box,
   CreditCard,
-  Tool,
+  Wrench,
   CircleDollarSign,
   CheckCircle2
 } from "lucide-react";
@@ -33,7 +33,6 @@ interface SidebarProps {
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   const userType = localStorage.getItem("userType") || "admin";
 
-  // Admin Menu Items
   const adminMenuItems = [
     {
       title: "Main Dashboard",
@@ -97,7 +96,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
   ];
 
-  // Store Menu Items
   const storeMenuItems = [
     {
       title: "Store Dashboard",
@@ -146,7 +144,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
   ];
 
-  // Vendor Menu Items
   const vendorMenuItems = [
     {
       title: "Vendor Dashboard",
@@ -190,7 +187,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
   ];
 
-  // Factory Menu Items
   const factoryMenuItems = [
     {
       title: "Factory Dashboard",
@@ -219,7 +215,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
     {
       title: "Maintenance",
-      icon: <Tool size={20} />,
+      icon: <Wrench size={20} />,
       path: "/factory-dashboard/maintenance",
     },
     {
@@ -244,7 +240,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     },
   ];
 
-  // Determine which menu items to show based on user type
   let menuItems = adminMenuItems;
   let dashboardTitle = "Unnati Traders";
   
@@ -261,7 +256,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
@@ -269,7 +263,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
         ></div>
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           "fixed top-0 left-0 z-50 h-full w-64 bg-unnati-dark text-white shadow-lg transition-transform md:relative md:translate-x-0 md:z-0",

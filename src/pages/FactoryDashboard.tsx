@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
@@ -25,7 +24,6 @@ const FactoryDashboard = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const userType = localStorage.getItem("userType");
 
-  // Redirect to login if not authenticated or not a factory user
   if (!isAuthenticated || userType !== "factory") {
     return <Navigate to="/login" />;
   }
@@ -34,7 +32,6 @@ const FactoryDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Sample data for charts
   const productionData = [
     { name: "Jan", value: 4000 },
     { name: "Feb", value: 3500 },
@@ -64,7 +61,6 @@ const FactoryDashboard = () => {
             <p className="text-gray-500">Monitor production, inventory and operations</p>
           </div>
           
-          {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <StatCard
               title="Today's Production"
@@ -90,7 +86,6 @@ const FactoryDashboard = () => {
             />
           </div>
 
-          {/* Production Status */}
           <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
             <h2 className="text-lg font-semibold mb-4">Production Status</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -141,13 +136,11 @@ const FactoryDashboard = () => {
             </div>
           </div>
           
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <ChartCard title="Production Output (Last 6 months)" type="line" data={productionData} />
-            <ChartCard title="Raw Material Usage" type="pie" data={rawMaterialData} />
+            <ChartCard title="Raw Material Usage" type="bar" data={rawMaterialData} />
           </div>
           
-          {/* Pending Orders and Delivery Schedule */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-lg font-semibold mb-4">Pending Production Orders</h2>
@@ -247,7 +240,6 @@ const FactoryDashboard = () => {
             </div>
           </div>
           
-          {/* Quick Actions */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">

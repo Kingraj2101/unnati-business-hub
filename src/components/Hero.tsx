@@ -16,7 +16,7 @@ const Hero = () => {
             Unnati Traders
           </h1>
           <p className="mt-3 text-xl md:text-2xl font-light max-w-3xl">
-            Leading manufacturers and suppliers of wires and electric hardware with integrated business management solutions
+            Leading manufacturers and suppliers of high-quality wires and electric hardware for all your needs
           </p>
           <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center md:justify-start">
             <Button 
@@ -25,7 +25,7 @@ const Hero = () => {
               className="bg-unnati-secondary hover:bg-unnati-secondary/90 text-white"
             >
               <Link to="/products">
-                Explore Products & Services
+                Explore Our Products
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -35,8 +35,8 @@ const Hero = () => {
               variant="outline"
               className="bg-white/10 backdrop-blur-sm text-white border-white hover:bg-white/20"
             >
-              <Link to="/login">
-                Login / Register
+              <Link to="/contact">
+                Contact Us
               </Link>
             </Button>
           </div>

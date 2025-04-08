@@ -46,7 +46,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/products" className="text-gray-300 hover:text-unnati-secondary">
-                  Products & Services
+                  Products
                 </Link>
               </li>
               <li>
@@ -62,15 +62,15 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Products */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Our Services</h3>
+            <h3 className="text-xl font-bold mb-4">Our Products</h3>
             <ul className="space-y-2">
-              <li className="text-gray-300">Wire Manufacturing</li>
-              <li className="text-gray-300">Electric Hardware Supply</li>
-              <li className="text-gray-300">Distribution Network</li>
-              <li className="text-gray-300">Buy Now, Pay Later</li>
-              <li className="text-gray-300">Franchise Opportunities</li>
+              <li className="text-gray-300">Copper Wires</li>
+              <li className="text-gray-300">Aluminum Wires</li>
+              <li className="text-gray-300">Switchgear</li>
+              <li className="text-gray-300">Circuit Breakers</li>
+              <li className="text-gray-300">LED Lighting</li>
             </ul>
           </div>
 

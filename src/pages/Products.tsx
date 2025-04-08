@@ -10,8 +10,8 @@ import {
   Zap, 
   Truck, 
   ShieldCheck, 
-  BarChart3, 
-  Clock
+  Wrench, 
+  Certificate
 } from "lucide-react";
 
 const Products = () => {
@@ -60,42 +60,42 @@ const Products = () => {
     }
   ];
 
-  const services = [
+  const specialties = [
     {
       id: 1,
-      name: "Inventory Management",
+      name: "Premium Materials",
       icon: <Package />,
-      description: "Track and manage stock levels across multiple locations with real-time updates and automated notifications."
+      description: "We use only the highest quality raw materials sourced from trusted suppliers to ensure product durability and performance."
     },
     {
       id: 2,
-      name: "Billing & Invoicing",
+      name: "Advanced Manufacturing",
       icon: <Zap />,
-      description: "Generate GST and non-GST invoices, manage payments, and track outstanding balances with ease."
+      description: "Our state-of-the-art manufacturing facilities employ the latest technologies to produce precision-engineered electrical products."
     },
     {
       id: 3,
-      name: "Distribution Network",
+      name: "Nationwide Distribution",
       icon: <Truck />,
-      description: "Streamline your distribution operations with order management, logistics tracking, and delivery scheduling."
+      description: "With our extensive distribution network, we ensure timely delivery of products across the country."
     },
     {
       id: 4,
-      name: "Buy Now, Pay Later",
+      name: "Quality Assurance",
       icon: <ShieldCheck />,
-      description: "Offer flexible payment terms to your trusted customers with our secure BNPL management system."
+      description: "Every product undergoes rigorous testing and quality checks to meet international standards and specifications."
     },
     {
       id: 5,
-      name: "Financial Reporting",
-      icon: <BarChart3 />,
-      description: "Access comprehensive financial reports including profit & loss statements, sales analysis, and expense tracking."
+      name: "Custom Solutions",
+      icon: <Wrench />,
+      description: "We offer customized products tailored to meet specific requirements of diverse industrial and commercial applications."
     },
     {
       id: 6,
-      name: "Real-time Analytics",
-      icon: <Clock />,
-      description: "Make data-driven decisions with real-time business analytics and performance dashboards."
+      name: "Certified Products",
+      icon: <Certificate />,
+      description: "Our products are certified by recognized industry authorities, ensuring compliance with safety and performance standards."
     }
   ];
 
@@ -107,9 +107,9 @@ const Products = () => {
         <section className="bg-unnati-primary/10 py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-unnati-dark mb-4">Our Products & Services</h1>
+              <h1 className="text-4xl font-bold text-unnati-dark mb-4">Our Products</h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Explore our comprehensive range of electrical products and business management services designed to empower your operations.
+                Explore our comprehensive range of high-quality electrical products manufactured with precision and excellence.
               </p>
             </div>
           </div>
@@ -166,70 +166,58 @@ const Products = () => {
           </div>
         </section>
 
-        {/* Services Section */}
+        {/* Manufacturing Specialties Section */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-unnati-dark">Business Management Services</h2>
+              <h2 className="text-3xl font-bold text-unnati-dark">Manufacturing Excellence</h2>
               <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-                Our comprehensive business management system streamlines your operations and boosts efficiency
+                Our manufacturing specialties that set us apart in the industry
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service) => (
-                <div key={service.id} className="bg-white rounded-lg shadow-md p-6">
-                  <div className="text-unnati-primary mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
-                  <p className="text-gray-600">{service.description}</p>
+              {specialties.map((specialty) => (
+                <div key={specialty.id} className="bg-white rounded-lg shadow-md p-6">
+                  <div className="text-unnati-primary mb-4">{specialty.icon}</div>
+                  <h3 className="text-xl font-semibold mb-2">{specialty.name}</h3>
+                  <p className="text-gray-600">{specialty.description}</p>
                 </div>
               ))}
-            </div>
-
-            <div className="text-center mt-12">
-              <Button 
-                asChild
-                className="bg-unnati-primary hover:bg-unnati-primary/90"
-              >
-                <Link to="/login">
-                  Try Our Management System
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
             </div>
           </div>
         </section>
 
-        {/* BNPL Feature Highlight */}
+        {/* Manufacturing Process Highlight */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold text-unnati-dark mb-6">Buy Now, Pay Later</h2>
+                <h2 className="text-3xl font-bold text-unnati-dark mb-6">Our Manufacturing Process</h2>
                 <p className="text-gray-600 mb-4">
-                  Our innovative BNPL feature allows you to offer flexible payment terms to your trusted customers, while maintaining complete control over your finances.
+                  At Unnati Traders, we follow a rigorous manufacturing process to ensure the highest quality products. Our state-of-the-art facilities and skilled workforce combine to create electrical products that meet international standards.
                 </p>
                 
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start">
                     <span className="text-unnati-secondary mr-2">✓</span>
-                    <span>Set customizable credit limits for each customer</span>
+                    <span>Sourcing premium quality raw materials</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-unnati-secondary mr-2">✓</span>
-                    <span>Automated payment reminders and notifications</span>
+                    <span>Precision engineering and manufacturing</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-unnati-secondary mr-2">✓</span>
-                    <span>Comprehensive reporting on outstanding payments</span>
+                    <span>Multi-stage quality control checks</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-unnati-secondary mr-2">✓</span>
-                    <span>Integration with billing and accounting systems</span>
+                    <span>Advanced testing under various conditions</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-unnati-secondary mr-2">✓</span>
-                    <span>Risk assessment tools for credit approvals</span>
+                    <span>Careful packaging and distribution</span>
                   </li>
                 </ul>
                 
@@ -237,15 +225,15 @@ const Products = () => {
                   asChild
                   className="bg-unnati-primary hover:bg-unnati-primary/90"
                 >
-                  <Link to="/contact">
-                    Learn More About BNPL
+                  <Link to="/about">
+                    Learn More About Our Process
                   </Link>
                 </Button>
               </div>
               
               <div className="bg-unnati-primary/5 p-8 rounded-lg">
                 <div className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold mb-4 text-unnati-dark">How BNPL Works</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-unnati-dark">Quality Assurance Process</h3>
                   
                   <div className="space-y-6">
                     <div className="flex items-start">
@@ -253,8 +241,8 @@ const Products = () => {
                         1
                       </div>
                       <div>
-                        <h4 className="font-medium mb-1">Set Credit Terms</h4>
-                        <p className="text-sm text-gray-600">Define payment terms and credit limits for each customer in the system.</p>
+                        <h4 className="font-medium mb-1">Material Inspection</h4>
+                        <p className="text-sm text-gray-600">Thorough inspection of raw materials before entering production.</p>
                       </div>
                     </div>
                     
@@ -263,8 +251,8 @@ const Products = () => {
                         2
                       </div>
                       <div>
-                        <h4 className="font-medium mb-1">Process BNPL Orders</h4>
-                        <p className="text-sm text-gray-600">Create invoices with deferred payment dates through the billing system.</p>
+                        <h4 className="font-medium mb-1">In-Process Testing</h4>
+                        <p className="text-sm text-gray-600">Continuous monitoring and testing during manufacturing.</p>
                       </div>
                     </div>
                     
@@ -273,8 +261,8 @@ const Products = () => {
                         3
                       </div>
                       <div>
-                        <h4 className="font-medium mb-1">Track Outstanding Payments</h4>
-                        <p className="text-sm text-gray-600">Monitor all pending payments and upcoming dues through the dashboard.</p>
+                        <h4 className="font-medium mb-1">Final Product Inspection</h4>
+                        <p className="text-sm text-gray-600">Thorough examination of finished products for defects.</p>
                       </div>
                     </div>
                     
@@ -283,8 +271,8 @@ const Products = () => {
                         4
                       </div>
                       <div>
-                        <h4 className="font-medium mb-1">Automated Reminders</h4>
-                        <p className="text-sm text-gray-600">System sends timely reminders to customers about upcoming payment dues.</p>
+                        <h4 className="font-medium mb-1">Performance Testing</h4>
+                        <p className="text-sm text-gray-600">Rigorous testing of products under various conditions.</p>
                       </div>
                     </div>
                     
@@ -293,8 +281,8 @@ const Products = () => {
                         5
                       </div>
                       <div>
-                        <h4 className="font-medium mb-1">Payment Collection</h4>
-                        <p className="text-sm text-gray-600">Record payments received and reconcile accounts automatically.</p>
+                        <h4 className="font-medium mb-1">Certification</h4>
+                        <p className="text-sm text-gray-600">Final certification and documentation before shipping.</p>
                       </div>
                     </div>
                   </div>
@@ -307,9 +295,9 @@ const Products = () => {
         {/* CTA Section */}
         <section className="bg-unnati-primary text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+            <h2 className="text-3xl font-bold mb-4">Ready to Order Our Products?</h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto">
-              Contact us today to learn more about our products and services, or to request a personalized demo of our business management system.
+              Contact us today to discuss your requirements or visit our retail store to explore our full range of electrical products.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button 
@@ -325,8 +313,8 @@ const Products = () => {
                 variant="outline"
                 className="bg-transparent border-white text-white hover:bg-white/10"
               >
-                <Link to="/login">
-                  Request Demo
+                <Link to="/about">
+                  Find Our Retail Stores
                 </Link>
               </Button>
             </div>

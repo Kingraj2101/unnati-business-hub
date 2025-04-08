@@ -11,7 +11,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
-    { name: "Products & Services", path: "/products" },
+    { name: "Products", path: "/products" },
     { name: "Contact", path: "/contact" },
     { name: "Franchise", path: "/franchise" },
   ];
@@ -49,7 +49,7 @@ const Navbar = () => {
               asChild
               className="ml-4 bg-unnati-primary hover:bg-unnati-primary/90"
             >
-              <Link to="/login">Login</Link>
+              <Link to="/contact">Contact Us</Link>
             </Button>
           </div>
           
@@ -93,7 +93,7 @@ const Navbar = () => {
               asChild
               className="mt-4 w-full bg-unnati-primary hover:bg-unnati-primary/90"
             >
-              <Link to="/login" onClick={() => setIsOpen(false)}>Login</Link>
+              <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
             </Button>
           </div>
         </div>

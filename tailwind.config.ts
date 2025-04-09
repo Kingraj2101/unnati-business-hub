@@ -64,11 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				unnati: {
-					primary: '#1e40af', // deep blue
-					secondary: '#f97316', // orange
-					accent: '#60a5fa', // light blue
-					muted: '#f3f4f6', // light gray
-					dark: '#1e293b'  // slate dark
+					primary: '#0099cc', // Bright blue from logo
+					secondary: '#ff3333', // Red from logo
+					accent: '#00ccff', // Light cyan from logo
+					muted: '#f3f4f6', // Light gray
+					dark: '#1e293b',  // Dark slate
+					silver: '#d1d5db'  // Silver/gray for text
 				}
 			},
 			borderRadius: {

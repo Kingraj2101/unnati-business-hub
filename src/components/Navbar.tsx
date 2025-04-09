@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react"; // Added LogIn icon
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,9 +47,21 @@ const Navbar = () => {
             ))}
             <Button 
               asChild
-              className="ml-4 bg-unnati-primary hover:bg-unnati-primary/90"
+              variant="outline"
+              className="ml-4 border-unnati-primary text-unnati-primary hover:bg-unnati-primary/10"
             >
               <Link to="/contact">Contact Us</Link>
+            </Button>
+            
+            {/* New Login Button */}
+            <Button 
+              asChild
+              className="ml-2 bg-unnati-primary hover:bg-unnati-primary/90"
+            >
+              <Link to="/login" className="flex items-center gap-2">
+                <LogIn size={16} />
+                Login
+              </Link>
             </Button>
           </div>
           
@@ -91,9 +103,21 @@ const Navbar = () => {
             ))}
             <Button 
               asChild
-              className="mt-4 w-full bg-unnati-primary hover:bg-unnati-primary/90"
+              variant="outline"
+              className="mt-4 w-full border-unnati-primary text-unnati-primary hover:bg-unnati-primary/10"
             >
               <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
+            </Button>
+            
+            {/* New Login Button for Mobile */}
+            <Button 
+              asChild
+              className="mt-2 w-full bg-unnati-primary hover:bg-unnati-primary/90"
+            >
+              <Link to="/login" onClick={() => setIsOpen(false)} className="flex items-center gap-2 justify-center">
+                <LogIn size={16} />
+                Login
+              </Link>
             </Button>
           </div>
         </div>

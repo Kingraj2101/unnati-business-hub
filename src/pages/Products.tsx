@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,7 +10,7 @@ import {
   Truck, 
   ShieldCheck, 
   Wrench, 
-  Certificate
+  Award
 } from "lucide-react";
 
 const Products = () => {
@@ -94,7 +93,7 @@ const Products = () => {
     {
       id: 6,
       name: "Certified Products",
-      icon: <Certificate />,
+      icon: <Award />,
       description: "Our products are certified by recognized industry authorities, ensuring compliance with safety and performance standards."
     }
   ];

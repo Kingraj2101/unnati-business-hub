@@ -28,42 +28,42 @@ const FeatureSection = () => {
     {
       icon: <Shield size={24} />,
       title: "Superior Insulation",
-      description: "Our wires feature high-grade PVC and XLPE insulation for maximum safety and durability."
+      description: "Our wires feature high-grade PVC and XLPE insulation for maximum safety and durability in all environments."
     },
     {
       icon: <Zap size={24} />,
       title: "High Conductivity",
-      description: "Premium grade copper ensures excellent electrical conductivity and energy efficiency."
+      description: "Premium grade copper ensures excellent electrical conductivity and energy efficiency for optimal performance."
     },
     {
       icon: <Award size={24} />,
       title: "ISO Certified",
-      description: "All our manufacturing processes and products are ISO 9001:2015 certified for quality assurance."
+      description: "All our manufacturing processes and products are ISO 9001:2015 certified for quality assurance and reliability."
     },
     {
       icon: <Factory size={24} />,
       title: "Modern Manufacturing",
-      description: "State-of-the-art production facilities with advanced machinery for precision wire drawing."
+      description: "State-of-the-art production facilities with advanced machinery for precision wire drawing and quality control."
     },
     {
       icon: <CheckCircle size={24} />,
       title: "Quality Testing",
-      description: "Rigorous testing at every production stage ensures our wires meet the highest industry standards."
+      description: "Rigorous testing at every production stage ensures our wires meet the highest industry standards and specifications."
     },
     {
       icon: <Truck size={24} />,
       title: "Nationwide Distribution",
-      description: "Extensive distribution network ensuring timely delivery across the country."
+      description: "Extensive distribution network ensuring timely delivery and consistent supply across the country."
     },
     {
       icon: <Scale size={24} />,
       title: "Customization Options",
-      description: "Custom wire solutions available based on specific requirements for industrial applications."
+      description: "Custom wire solutions available based on specific requirements for industrial and commercial applications."
     },
     {
       icon: <Gauge size={24} />,
       title: "Temperature Resistant",
-      description: "Our wires maintain performance integrity even under extreme temperature conditions."
+      description: "Our wires maintain performance integrity even under extreme temperature conditions and harsh environments."
     }
   ];
 
@@ -72,10 +72,10 @@ const FeatureSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-unnati-dark">
-            Our Wire Manufacturing Excellence
+            Industry-Leading Wire Manufacturing
           </h2>
           <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover what makes Unnati Wires the preferred choice for quality electrical wires
+            Discover what makes Unnati Wires the preferred choice for quality electrical wires across sectors
           </p>
         </div>
 

@@ -26,19 +26,19 @@ const Testimonial = ({ quote, name, role }: TestimonialProps) => {
 const TestimonialSection = () => {
   const testimonials = [
     {
-      quote: "Unnati Traders' business management system has revolutionized how we track inventory and manage our finances. The BNPL feature has been particularly valuable for our distribution network.",
+      quote: "Unnati Wires has been our trusted supplier for over a decade. Their copper wires offer exceptional conductivity and have proven to be highly reliable for our electrical installations.",
       name: "Rajesh Sharma",
-      role: "Electrical Shop Owner"
+      role: "Electrical Contractor"
     },
     {
-      quote: "The integrated billing system with GST support has made our accounting process seamless. We've saved countless hours on paperwork and reduced billing errors significantly.",
+      quote: "The quality control at Unnati is remarkable. Every batch of wires we've received meets the exact specifications and industry standards. Their flame-retardant insulation is the best in the market.",
       name: "Priya Patel",
-      role: "Business Operations Manager"
+      role: "Procurement Manager, Construction Company"
     },
     {
-      quote: "As a distributor, the inventory tracking and order management features have helped me optimize my stock levels. The system alerts me when it's time to reorder.",
+      quote: "As a distributor of electrical products, I can confidently say that Unnati Wires are among our best-selling items due to their consistent quality and competitive pricing.",
       name: "Vikram Singh",
-      role: "Regional Distributor"
+      role: "Electrical Goods Distributor"
     }
   ];
 
@@ -50,7 +50,7 @@ const TestimonialSection = () => {
             What Our Customers Say
           </h2>
           <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
-            Hear from businesses that have enhanced their operations with our management system
+            Hear from professionals who rely on our high-quality wires for their projects
           </p>
         </div>
 

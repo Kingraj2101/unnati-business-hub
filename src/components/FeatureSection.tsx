@@ -1,8 +1,8 @@
 
 import React from "react";
 import { 
-  Package, ShieldCheck, TrendingUp, Users, 
-  BarChart3, Truck, FileText, Database
+  Shield, Zap, Award, Factory, 
+  Gauge, Truck, CheckCircle, Scale
 } from "lucide-react";
 
 interface FeatureCardProps {
@@ -26,44 +26,44 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => {
 const FeatureSection = () => {
   const features = [
     {
-      icon: <Package size={24} />,
-      title: "Inventory Management",
-      description: "Track stock levels, manage supplier-wise inventory, and receive low-stock alerts."
+      icon: <Shield size={24} />,
+      title: "Superior Insulation",
+      description: "Our wires feature high-grade PVC and XLPE insulation for maximum safety and durability."
     },
     {
-      icon: <FileText size={24} />,
-      title: "Billing & Invoicing",
-      description: "Generate GST & Non-GST invoices with customizable templates and automated calculations."
+      icon: <Zap size={24} />,
+      title: "High Conductivity",
+      description: "Premium grade copper ensures excellent electrical conductivity and energy efficiency."
     },
     {
-      icon: <Database size={24} />,
-      title: "Accounting & Bookkeeping",
-      description: "Maintain separate and combined accounts for your factory and shop operations."
+      icon: <Award size={24} />,
+      title: "ISO Certified",
+      description: "All our manufacturing processes and products are ISO 9001:2015 certified for quality assurance."
     },
     {
-      icon: <BarChart3 size={24} />,
-      title: "Reports & Analytics",
-      description: "Access comprehensive reports on sales, BNPL recovery, and profit/loss statements."
+      icon: <Factory size={24} />,
+      title: "Modern Manufacturing",
+      description: "State-of-the-art production facilities with advanced machinery for precision wire drawing."
     },
     {
-      icon: <TrendingUp size={24} />,
-      title: "Business Growth",
-      description: "Track performance metrics and identify growth opportunities for your business."
+      icon: <CheckCircle size={24} />,
+      title: "Quality Testing",
+      description: "Rigorous testing at every production stage ensures our wires meet the highest industry standards."
     },
     {
       icon: <Truck size={24} />,
-      title: "Supplier Management",
-      description: "Streamline relations with suppliers through organized order and payment tracking."
+      title: "Nationwide Distribution",
+      description: "Extensive distribution network ensuring timely delivery across the country."
     },
     {
-      icon: <Users size={24} />,
-      title: "Multi-User Access",
-      description: "Role-based access control for employees, vendors, and distributors."
+      icon: <Scale size={24} />,
+      title: "Customization Options",
+      description: "Custom wire solutions available based on specific requirements for industrial applications."
     },
     {
-      icon: <ShieldCheck size={24} />,
-      title: "Secure Operations",
-      description: "Enterprise-level security for your business data and financial information."
+      icon: <Gauge size={24} />,
+      title: "Temperature Resistant",
+      description: "Our wires maintain performance integrity even under extreme temperature conditions."
     }
   ];
 
@@ -72,10 +72,10 @@ const FeatureSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-unnati-dark">
-            Business Management Features
+            Our Wire Manufacturing Excellence
           </h2>
           <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
-            Our integrated system helps you manage every aspect of your wire factory and electric hardware business
+            Discover what makes Unnati Wires the preferred choice for quality electrical wires
           </p>
         </div>
 

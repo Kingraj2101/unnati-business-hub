@@ -21,10 +21,10 @@ const Hero = () => {
               />
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              Premium Electrical <span className="text-unnati-accent">Solutions</span>
+              Premium Wire <span className="text-unnati-accent">Manufacturing</span>
             </h1>
             <p className="mt-3 text-xl md:text-2xl font-light max-w-3xl">
-              Leading manufacturers and suppliers of high-quality wires and electric hardware for all your needs
+              Leading manufacturer of high-quality copper and aluminum wires for industrial, commercial and residential applications
             </p>
             <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center md:justify-start">
               <Button 

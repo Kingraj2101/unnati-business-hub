@@ -28,11 +28,11 @@ const Navbar = () => {
             <Link to="/" className="flex-shrink-0 flex items-center gap-2">
               <img 
                 src="/lovable-uploads/e19f7679-ab22-4e53-a653-5c908d157cf0.png" 
-                alt="Unnati Traders Logo" 
+                alt="Shree Unnati Traders Logo" 
                 className="h-10" 
               />
               <div className="flex flex-col items-start">
-                <span className="text-unnati-primary font-bold text-xl">Unnati</span>
+                <span className="text-unnati-primary font-bold text-xl">Shree Unnati</span>
                 <span className="text-unnati-silver text-xs -mt-1">WIRES & TRADERS</span>
               </div>
             </Link>

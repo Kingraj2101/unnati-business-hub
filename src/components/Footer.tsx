@@ -13,11 +13,11 @@ const Footer = () => {
             <div className="flex items-center gap-3 mb-4">
               <img 
                 src="/lovable-uploads/e19f7679-ab22-4e53-a653-5c908d157cf0.png" 
-                alt="Unnati Traders Logo" 
+                alt="Shree Unnati Traders Logo" 
                 className="h-10" 
               />
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-unnati-accent">Unnati</span>
+                <span className="text-xl font-bold text-unnati-accent">Shree Unnati</span>
                 <span className="text-xs text-unnati-silver -mt-1">WIRES & TRADERS</span>
               </div>
             </div>
@@ -106,7 +106,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 mt-8 pt-6">
           <p className="text-center text-gray-400">
-            &copy; {new Date().getFullYear()} Unnati Wires & Traders. All rights reserved.
+            &copy; {new Date().getFullYear()} Shree Unnati Wires & Traders. All rights reserved.
           </p>
         </div>
       </div>

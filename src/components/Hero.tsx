@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ const Hero = () => {
             <div className="mb-6">
               <img 
                 src="/lovable-uploads/ad65662c-1df0-466d-9376-ab51d0e0621f.png" 
-                alt="Unnati Wires and Traders" 
+                alt="Shree Unnati Wires and Traders" 
                 className="h-24 mx-auto md:mx-0 mb-6" 
               />
             </div>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -21,7 +22,9 @@ import {
   CreditCard,
   Wrench,
   CircleDollarSign,
-  CheckCircle2
+  CheckCircle2,
+  Receipt,
+  ClipboardList
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -106,6 +109,16 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
       title: "Sales & Billing",
       icon: <ShoppingCart size={20} />,
       path: "/store-dashboard/sales",
+    },
+    {
+      title: "Billing System",
+      icon: <Receipt size={20} />,
+      path: "/store-dashboard/billing",
+    },
+    {
+      title: "Supply Management",
+      icon: <Truck size={20} />,
+      path: "/store-dashboard/supply",
     },
     {
       title: "Inventory",
@@ -199,6 +212,16 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
       path: "/factory-dashboard/production",
     },
     {
+      title: "Billing System",
+      icon: <Receipt size={20} />,
+      path: "/factory-dashboard/billing",
+    },
+    {
+      title: "Supply Management",
+      icon: <ClipboardList size={20} />,
+      path: "/factory-dashboard/supply",
+    },
+    {
       title: "Raw Materials",
       icon: <Box size={20} />,
       path: "/factory-dashboard/materials",
@@ -241,7 +264,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   ];
 
   let menuItems = adminMenuItems;
-  let dashboardTitle = "Unnati Traders";
+  let dashboardTitle = "Shree Unnati Traders";
   
   if (userType === "store") {
     menuItems = storeMenuItems;

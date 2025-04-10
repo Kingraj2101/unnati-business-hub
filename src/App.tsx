@@ -27,6 +27,14 @@ import SuppliersDashboard from "./pages/SuppliersDashboard";
 import ReportsDashboard from "./pages/ReportsDashboard";
 import NotFound from "./pages/NotFound";
 
+// Factory Pages
+import FactoryBillingSystem from "./pages/factory/FactoryBillingSystem";
+import FactorySupplySystem from "./pages/factory/FactorySupplySystem";
+
+// Store Pages
+import StoreBillingSystem from "./pages/store/StoreBillingSystem";
+import StoreSupplySystem from "./pages/store/StoreSupplySystem";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,9 +60,20 @@ const App = () => (
           <Route path="/dashboard/retail" element={<RetailDashboard />} />
           <Route path="/dashboard/suppliers" element={<SuppliersDashboard />} />
           <Route path="/dashboard/reports" element={<ReportsDashboard />} />
+          
+          {/* Store Routes */}
           <Route path="/store-dashboard" element={<StoreDashboard />} />
-          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+          <Route path="/store-dashboard/billing" element={<StoreBillingSystem />} />
+          <Route path="/store-dashboard/supply" element={<StoreSupplySystem />} />
+          
+          {/* Factory Routes */}
           <Route path="/factory-dashboard" element={<FactoryDashboard />} />
+          <Route path="/factory-dashboard/billing" element={<FactoryBillingSystem />} />
+          <Route path="/factory-dashboard/supply" element={<FactorySupplySystem />} />
+          
+          {/* Vendor Routes */}
+          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

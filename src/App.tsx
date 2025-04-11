@@ -37,48 +37,50 @@ import StoreSupplySystem from "./pages/store/StoreSupplySystem";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/franchise" element={<Franchise />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/billing" element={<BillingDashboard />} />
-          <Route path="/dashboard/accounting" element={<AccountingDashboard />} />
-          <Route path="/dashboard/inventory" element={<InventoryDashboard />} />
-          <Route path="/dashboard/service" element={<ServiceDashboard />} />
-          <Route path="/dashboard/expenses" element={<ExpensesDashboard />} />
-          <Route path="/dashboard/factory-stock" element={<FactoryStockDashboard />} />
-          <Route path="/dashboard/retail" element={<RetailDashboard />} />
-          <Route path="/dashboard/suppliers" element={<SuppliersDashboard />} />
-          <Route path="/dashboard/reports" element={<ReportsDashboard />} />
-          
-          {/* Store Routes */}
-          <Route path="/store-dashboard" element={<StoreDashboard />} />
-          <Route path="/store-dashboard/billing" element={<StoreBillingSystem />} />
-          <Route path="/store-dashboard/supply" element={<StoreSupplySystem />} />
-          
-          {/* Factory Routes */}
-          <Route path="/factory-dashboard" element={<FactoryDashboard />} />
-          <Route path="/factory-dashboard/billing" element={<FactoryBillingSystem />} />
-          <Route path="/factory-dashboard/supply" element={<FactorySupplySystem />} />
-          
-          {/* Vendor Routes */}
-          <Route path="/vendor-dashboard" element={<VendorDashboard />} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/franchise" element={<Franchise />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/billing" element={<BillingDashboard />} />
+            <Route path="/dashboard/accounting" element={<AccountingDashboard />} />
+            <Route path="/dashboard/inventory" element={<InventoryDashboard />} />
+            <Route path="/dashboard/service" element={<ServiceDashboard />} />
+            <Route path="/dashboard/expenses" element={<ExpensesDashboard />} />
+            <Route path="/dashboard/factory-stock" element={<FactoryStockDashboard />} />
+            <Route path="/dashboard/retail" element={<RetailDashboard />} />
+            <Route path="/dashboard/suppliers" element={<SuppliersDashboard />} />
+            <Route path="/dashboard/reports" element={<ReportsDashboard />} />
+            
+            {/* Store Routes */}
+            <Route path="/store-dashboard" element={<StoreDashboard />} />
+            <Route path="/store-dashboard/billing" element={<StoreBillingSystem />} />
+            <Route path="/store-dashboard/supply" element={<StoreSupplySystem />} />
+            
+            {/* Factory Routes */}
+            <Route path="/factory-dashboard" element={<FactoryDashboard />} />
+            <Route path="/factory-dashboard/billing" element={<FactoryBillingSystem />} />
+            <Route path="/factory-dashboard/supply" element={<FactorySupplySystem />} />
+            
+            {/* Vendor Routes */}
+            <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface InvoiceCreatorProps {
   isOpen: boolean;
@@ -81,10 +82,11 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
     { productId: "", description: "", quantity: 1, price: 0 }
   ]);
   const [taxRate, setTaxRate] = useState("18");
+  const [invoiceType, setInvoiceType] = useState("with-gst");
   
   // Calculate subtotal
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const taxAmount = (subtotal * parseFloat(taxRate)) / 100;
+  const taxAmount = invoiceType === "with-gst" ? (subtotal * parseFloat(taxRate)) / 100 : 0;
   const total = subtotal + taxAmount;
 
   const addItem = () => {
@@ -161,18 +163,19 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
         total: item.price * item.quantity
       })),
       subtotal,
-      taxRate: parseFloat(taxRate),
+      taxRate: invoiceType === "with-gst" ? parseFloat(taxRate) : 0,
       taxAmount,
       total,
       notes,
-      status: "Pending"
+      status: "Pending",
+      invoiceType: invoiceType
     };
 
     // Simulate saving
     setTimeout(() => {
       toast({
         title: "Invoice Created",
-        description: `Invoice ${invoice.id} has been created successfully`,
+        description: `${invoiceType === "with-gst" ? "GST" : "Non-GST"} Invoice ${invoice.id} has been created successfully`,
       });
       
       onInvoiceCreated(invoice);
@@ -224,6 +227,24 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
               </div>
             </div>
             
+            <div className="border-b pb-4">
+              <Label className="mb-2 block">Invoice Type</Label>
+              <RadioGroup
+                value={invoiceType}
+                onValueChange={setInvoiceType}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="with-gst" id="invoice-with-gst" />
+                  <Label htmlFor="invoice-with-gst" className="cursor-pointer">With GST</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="without-gst" id="invoice-without-gst" />
+                  <Label htmlFor="invoice-without-gst" className="cursor-pointer">Without GST</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="invoice-date">Invoice Date</Label>
@@ -245,24 +266,25 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                 />
               </div>
               
-              <div>
-                <Label htmlFor="tax-rate">Tax Rate (%)</Label>
-                <Select
-                  value={taxRate}
-                  onValueChange={setTaxRate}
-                >
-                  <SelectTrigger id="tax-rate">
-                    <SelectValue placeholder="Select tax rate" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">No Tax (0%)</SelectItem>
-                    <SelectItem value="5">GST 5%</SelectItem>
-                    <SelectItem value="12">GST 12%</SelectItem>
-                    <SelectItem value="18">GST 18%</SelectItem>
-                    <SelectItem value="28">GST 28%</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {invoiceType === "with-gst" && (
+                <div>
+                  <Label htmlFor="tax-rate">Tax Rate (%)</Label>
+                  <Select
+                    value={taxRate}
+                    onValueChange={setTaxRate}
+                  >
+                    <SelectTrigger id="tax-rate">
+                      <SelectValue placeholder="Select tax rate" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">GST 5%</SelectItem>
+                      <SelectItem value="12">GST 12%</SelectItem>
+                      <SelectItem value="18">GST 18%</SelectItem>
+                      <SelectItem value="28">GST 28%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             
             <div>
@@ -353,7 +375,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={3} rowSpan={3} className="align-top">
+                      <TableCell colSpan={3} rowSpan={invoiceType === "with-gst" ? 3 : 2} className="align-top">
                         <Label htmlFor="notes" className="mb-2 block">Notes</Label>
                         <Textarea
                           id="notes"
@@ -369,15 +391,17 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                       </TableCell>
                       <TableCell></TableCell>
                     </TableRow>
-                    <TableRow>
-                      <TableCell className="text-right">
-                        Tax ({parseFloat(taxRate)}%)
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        ₹{taxAmount.toFixed(2)}
-                      </TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
+                    {invoiceType === "with-gst" && (
+                      <TableRow>
+                        <TableCell className="text-right">
+                          GST ({parseFloat(taxRate)}%)
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          ₹{taxAmount.toFixed(2)}
+                        </TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    )}
                     <TableRow>
                       <TableCell className="text-right font-bold">Total</TableCell>
                       <TableCell className="text-right font-bold text-lg">
@@ -397,7 +421,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
             </Button>
             <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
-              Create Invoice
+              Create {invoiceType === "with-gst" ? "GST" : "Non-GST"} Invoice
             </Button>
           </DialogFooter>
         </form>

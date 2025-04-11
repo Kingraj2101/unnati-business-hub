@@ -1,9 +1,9 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, Search, Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
+import GlobalSearch from "./GlobalSearch";
 
 interface DashboardHeaderProps {
   toggleSidebar: () => void;
@@ -16,6 +16,7 @@ const DashboardHeader = ({ toggleSidebar }: DashboardHeaderProps) => {
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
+    localStorage.removeItem("userType");
     navigate("/login");
   };
 
@@ -32,12 +33,7 @@ const DashboardHeader = ({ toggleSidebar }: DashboardHeaderProps) => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="relative w-64 hidden md:block">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full pl-8"
-            />
+            <GlobalSearch />
           </div>
         </div>
 
@@ -50,7 +46,7 @@ const DashboardHeader = ({ toggleSidebar }: DashboardHeaderProps) => {
           <div className="flex items-center">
             <div className="mr-4 text-right hidden sm:block">
               <p className="text-sm font-medium">{user.name}</p>
-              <p className="text-xs text-gray-500">{user.role || "User"}</p>
+              <p className="text-xs text-gray-500">{user.role || "Admin"}</p>
             </div>
             <div className="h-10 w-10 rounded-full bg-unnati-primary/80 flex items-center justify-center text-white font-medium">
               {user.name.charAt(0)}

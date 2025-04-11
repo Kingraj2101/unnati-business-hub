@@ -4,8 +4,10 @@ import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
 import StatCard from "@/components/dashboard/StatCard";
-import RecentActivityCard from "@/components/dashboard/RecentActivityCard";
-import ChartCard from "@/components/dashboard/ChartCard";
+import BillingWorkflow from "@/components/dashboard/workflows/BillingWorkflow";
+import InventoryWorkflow from "@/components/dashboard/workflows/InventoryWorkflow";
+import FactoryWorkflow from "@/components/dashboard/workflows/FactoryWorkflow";
+import RetailWorkflow from "@/components/dashboard/workflows/RetailWorkflow";
 import { 
   ArrowUpRight, 
   ShoppingCart, 
@@ -30,25 +32,6 @@ const Dashboard = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-  // Sample data for charts
-  const salesData = [
-    { name: "Jan", value: 4000 },
-    { name: "Feb", value: 3000 },
-    { name: "Mar", value: 5000 },
-    { name: "Apr", value: 4500 },
-    { name: "May", value: 6000 },
-    { name: "Jun", value: 5500 },
-  ];
-
-  const inventoryData = [
-    { name: "Wires", value: 1200 },
-    { name: "Cables", value: 900 },
-    { name: "Switches", value: 1700 },
-    { name: "Breakers", value: 1400 },
-    { name: "Accessories", value: 2000 },
-    { name: "Lights", value: 1600 },
-  ];
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -119,42 +102,13 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <ChartCard title="Sales Overview (Last 6 months)" type="bar" data={salesData} />
-            <ChartCard title="Inventory by Category" type="bar" data={inventoryData} />
-          </div>
-          
-          {/* Recent Activity & Quick Access */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <RecentActivityCard />
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <Package className="mr-2 h-4 w-4" />
-                  Add New Stock
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <Users className="mr-2 h-4 w-4" />
-                  Manage Customers
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Create Invoice
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <Truck className="mr-2 h-4 w-4" />
-                  Supplier Orders
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-left">
-                  <ArrowUpRight className="mr-2 h-4 w-4" />
-                  Generate Reports
-                </Button>
-              </div>
+          {/* Workflows */}
+          <div className="space-y-6">
+            <BillingWorkflow />
+            <InventoryWorkflow />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <FactoryWorkflow />
+              <RetailWorkflow />
             </div>
           </div>
         </main>

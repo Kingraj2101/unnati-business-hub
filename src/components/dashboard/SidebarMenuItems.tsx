@@ -23,7 +23,9 @@ import {
   CircleDollarSign,
   CheckCircle2,
   Receipt,
-  ClipboardList
+  ClipboardList,
+  UserCog,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -86,7 +88,7 @@ export const adminMenuItems: SidebarMenuItem[] = [
   },
   {
     title: "User Management",
-    icon: <Users size={20} />,
+    icon: <UserCog size={20} />,
     path: "/dashboard/users",
   },
   {

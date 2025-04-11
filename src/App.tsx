@@ -26,6 +26,8 @@ import RetailDashboard from "./pages/RetailDashboard";
 import SuppliersDashboard from "./pages/SuppliersDashboard";
 import ReportsDashboard from "./pages/ReportsDashboard";
 import NotFound from "./pages/NotFound";
+import UserManagement from "./pages/UserManagement";
+import Settings from "./pages/Settings";
 
 // Factory Pages
 import FactoryBillingSystem from "./pages/factory/FactoryBillingSystem";
@@ -61,6 +63,8 @@ const App = () => {
             <Route path="/dashboard/retail" element={<RetailDashboard />} />
             <Route path="/dashboard/suppliers" element={<SuppliersDashboard />} />
             <Route path="/dashboard/reports" element={<ReportsDashboard />} />
+            <Route path="/dashboard/users" element={<UserManagement />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
             
             {/* Store Routes */}
             <Route path="/store-dashboard" element={<StoreDashboard />} />

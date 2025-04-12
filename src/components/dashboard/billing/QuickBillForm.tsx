@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { IndianRupee, Plus, Trash2, Calculator, Save } from "lucide-react";
+import { IndianRupee, Plus, Trash2, Calculator, Save, ShoppingBag } from "lucide-react";
 import { 
   Card, 
   CardContent, 
@@ -122,58 +122,67 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg flex items-center">
-          <Calculator className="mr-2 h-5 w-5 text-unnati-primary" />
-          Quick Bill
-        </CardTitle>
-        <CardDescription>
-          Create and print bills quickly for retail customers
-        </CardDescription>
+    <Card className="shadow-md border-t-4 border-t-unnati-primary">
+      <CardHeader className="bg-gray-50 border-b pb-4">
+        <div className="flex items-center">
+          <div className="bg-unnati-primary p-2 rounded-full mr-3">
+            <Calculator className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">Quick Bill</CardTitle>
+            <CardDescription>
+              Create and print bills quickly for retail customers
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
       
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="space-y-5 pt-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="customerName">Customer Name</Label>
+              <Label htmlFor="customerName" className="text-sm font-medium">Customer Name</Label>
               <Input
                 id="customerName"
                 placeholder="Walk-in Customer"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
+                className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="contactNumber">Contact Number (Optional)</Label>
+              <Label htmlFor="contactNumber" className="text-sm font-medium">Contact Number (Optional)</Label>
               <Input
                 id="contactNumber"
                 placeholder="Phone Number"
                 value={contactNumber}
                 onChange={(e) => setContactNumber(e.target.value)}
+                className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
               />
             </div>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Items</Label>
+              <Label className="text-sm font-medium flex items-center">
+                <ShoppingBag className="h-4 w-4 mr-1 text-unnati-primary" />
+                Items
+              </Label>
               <Button 
                 type="button" 
                 variant="outline" 
                 size="sm" 
                 onClick={addItem}
-                className="h-8"
+                className="h-8 border-unnati-primary text-unnati-primary hover:bg-unnati-primary/10"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add Item
               </Button>
             </div>
             
-            <div className="border rounded-md">
-              <div className="grid grid-cols-12 gap-2 p-3 bg-gray-50 border-b text-sm font-medium">
+            <div className="border rounded-md shadow-sm">
+              <div className="grid grid-cols-12 gap-2 p-3 bg-gray-50 border-b text-sm font-medium text-gray-600">
                 <div className="col-span-5">Item</div>
                 <div className="col-span-2">Qty</div>
                 <div className="col-span-2">Price</div>
@@ -181,7 +190,7 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                 <div className="col-span-1"></div>
               </div>
               
-              <div className="space-y-2 p-2">
+              <div className="space-y-2 p-3">
                 {items.map((item, index) => (
                   <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
                     <div className="col-span-5">
@@ -189,6 +198,7 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                         placeholder="Item name"
                         value={item.name}
                         onChange={(e) => updateItem(item.id, 'name', e.target.value)}
+                        className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
                       />
                     </div>
                     <div className="col-span-2">
@@ -197,6 +207,7 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                         min="1"
                         value={item.quantity}
                         onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                        className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
                       />
                     </div>
                     <div className="col-span-2">
@@ -205,15 +216,15 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                         <Input
                           type="number"
                           min="0"
-                          className="pl-8"
+                          className="pl-8 border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
                           value={item.price}
                           onChange={(e) => updateItem(item.id, 'price', parseFloat(e.target.value) || 0)}
                         />
                       </div>
                     </div>
                     <div className="col-span-2 flex items-center">
-                      <span className="px-2">₹</span>
-                      <span>{item.total.toFixed(2)}</span>
+                      <span className="px-2 text-gray-500">₹</span>
+                      <span className="font-medium">{item.total.toFixed(2)}</span>
                     </div>
                     <div className="col-span-1 flex justify-end">
                       <Button
@@ -221,10 +232,10 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                         variant="ghost"
                         size="icon"
                         onClick={() => removeItem(item.id)}
-                        className="h-8 w-8"
+                        className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
                         disabled={items.length === 1}
                       >
-                        <Trash2 className="h-4 w-4 text-gray-500" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -233,14 +244,14 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
-              <Label htmlFor="paymentMethod">Payment Method</Label>
+              <Label htmlFor="paymentMethod" className="text-sm font-medium">Payment Method</Label>
               <Select
                 value={paymentMethod}
                 onValueChange={setPaymentMethod}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20">
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,7 +264,7 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="discount">Discount (%)</Label>
+              <Label htmlFor="discount" className="text-sm font-medium">Discount (%)</Label>
               <Input
                 id="discount"
                 type="number"
@@ -261,38 +272,46 @@ const QuickBillForm: React.FC<QuickBillFormProps> = ({ onSubmit }) => {
                 max="100"
                 value={discount}
                 onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="note">Note (Optional)</Label>
+            <Label htmlFor="note" className="text-sm font-medium">Note (Optional)</Label>
             <Input
               id="note"
               placeholder="Additional information"
               value={note}
               onChange={(e) => setNote(e.target.value)}
+              className="border-gray-300 focus:border-unnati-primary focus:ring-unnati-primary/20"
             />
           </div>
           
-          <div className="border-t pt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Subtotal:</span>
-              <span>₹{calculateSubtotal().toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Discount ({discount}%):</span>
-              <span>-₹{((calculateSubtotal() * discount) / 100).toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between font-bold">
-              <span>Total:</span>
-              <span>₹{calculateTotal().toFixed(2)}</span>
+          <div className="bg-gray-50 p-4 rounded-md border">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">₹{calculateSubtotal().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Discount ({discount}%):</span>
+                <span className="font-medium text-red-500">-₹{((calculateSubtotal() * discount) / 100).toFixed(2)}</span>
+              </div>
+              <div className="border-t pt-2 mt-2">
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total:</span>
+                  <span className="text-unnati-primary">₹{calculateTotal().toFixed(2)}</span>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
         
-        <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline">Cancel</Button>
+        <CardFooter className="flex justify-between bg-gray-50 border-t py-4">
+          <Button type="button" variant="outline" className="border-gray-300">
+            Cancel
+          </Button>
           <Button type="submit" className="bg-unnati-primary hover:bg-unnati-primary/90">
             <Save className="mr-2 h-4 w-4" />
             Generate Bill

@@ -1,7 +1,8 @@
 
 import React from "react";
 
-const FileMinus = ({ size = 24, className = "", ...props }) => {
+// Custom component for FileMinus icon since it's not available in lucide-react
+const FileMinus = ({ size = 16, className = "" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +15,6 @@ const FileMinus = ({ size = 24, className = "", ...props }) => {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      {...props}
     >
       <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
       <polyline points="14 2 14 8 20 8" />

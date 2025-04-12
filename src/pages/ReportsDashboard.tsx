@@ -95,6 +95,13 @@ const ReportsDashboard = () => {
     });
   };
 
+  const handlePrintReport = (reportName: string) => {
+    toast({
+      title: "Printing Report",
+      description: `${reportName} is being sent to printer.`,
+    });
+  };
+
   const handleCloseReportViewer = () => {
     setReportViewerOpen(false);
     setActiveReport(null);
@@ -277,7 +284,13 @@ const ReportsDashboard = () => {
                 </Button>
               </CardHeader>
               <CardContent>
-                <ReportViewer reportName={activeReport} />
+                <ReportViewer 
+                  reportName={activeReport} 
+                  onClose={handleCloseReportViewer}
+                  onDownloadExcel={() => handleDownloadExcel(activeReport)}
+                  onDownloadPdf={() => handleDownloadPdf(activeReport)}
+                  onPrint={() => handlePrintReport(activeReport)}
+                />
               </CardContent>
             </Card>
           )}

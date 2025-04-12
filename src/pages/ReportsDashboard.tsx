@@ -26,8 +26,11 @@ import {
   Users,
   ShoppingBag,
   Eye,
-  Printer
+  Printer,
+  Box,
+  Package,
 } from "lucide-react";
+import FileMinus from "@/components/reports/FileMinus";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ChartCard from "@/components/dashboard/ChartCard";

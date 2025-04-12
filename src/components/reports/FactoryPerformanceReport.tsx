@@ -61,7 +61,7 @@ const FactoryPerformanceReport = () => {
             </div>
             <Progress value={35} className="h-2" />
             <div className="flex justify-between mt-1">
-              <span className="text-xs text-gray-500">Target: <3%</span>
+              <span className="text-xs text-gray-500">Target: &lt;3%</span>
               <span className="text-xs font-medium">4.2%</span>
             </div>
           </div>

@@ -3,55 +3,64 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
+import ReportCard from "@/components/reports/ReportCard";
+import ReportViewer from "@/components/reports/ReportViewer";
+import FactoryPerformanceReport from "@/components/reports/FactoryPerformanceReport";
+import StorePerformanceReport from "@/components/reports/StorePerformanceReport";
+import VendorPerformanceReport from "@/components/reports/VendorPerformanceReport";
+import FileMinus from "@/components/reports/FileMinus";
+import { useToast } from "@/hooks/use-toast";
 import { 
-  FileBarChart, 
+  Box, 
   FileText, 
-  FilePieChart, 
-  FileSpreadsheet,
-  Download,
-  Share2,
+  BarChart3, 
+  TrendingUp, 
+  Package,
+  BarChart,
   Calendar,
-  Filter,
-  FilePlus2,
-  FileDown,
-  FileUp,
-  Receipt,
-  Wallet,
-  Building,
+  Users,
+  DollarSign,
+  Truck,
   Factory,
   Store,
-  Truck,
-  DollarSign,
-  TrendingUp,
-  Users,
-  ShoppingBag,
-  Eye,
-  Printer,
-  Box,
-  Package,
+  CircleDollarSign,
+  Filter,
+  ShoppingBag
 } from "lucide-react";
-import FileMinus from "@/components/reports/FileMinus";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ChartCard from "@/components/dashboard/ChartCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReportCard from "@/components/reports/ReportCard";
 import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import ReportViewer from "@/components/reports/ReportViewer";
-import StorePerformanceReport from "@/components/reports/StorePerformanceReport";
-import FactoryPerformanceReport from "@/components/reports/FactoryPerformanceReport";
-import VendorPerformanceReport from "@/components/reports/VendorPerformanceReport";
-import { toast } from "@/hooks/use-toast";
+  Card, 
+  CardContent,
+  CardDescription,
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 const ReportsDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<string | null>(null);
+  const [activeReport, setActiveReport] = useState<string | null>(null);
+  const [reportViewerOpen, setReportViewerOpen] = useState(false);
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const { toast } = useToast();
+
+  // Filter states
+  const [dateRange, setDateRange] = useState("last30days");
+  const [reportCategory, setReportCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
@@ -62,87 +71,158 @@ const ReportsDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleDownloadReport = (reportName: string, format: 'excel' | 'pdf') => {
+  const handleViewReport = (reportName: string) => {
+    setActiveReport(reportName);
+    setReportViewerOpen(true);
+    // In a real application, you would fetch the report data here
     toast({
-      title: "Download Started",
-      description: `${reportName} is being downloaded in ${format.toUpperCase()} format.`,
+      title: "Opening Report",
+      description: `Loading ${reportName} report data...`,
     });
   };
 
-  const handleViewReport = (reportName: string) => {
-    setSelectedReport(reportName);
-    
-    // If you want to scroll to the report viewer
-    setTimeout(() => {
-      document.getElementById('report-viewer')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+  const handleDownloadExcel = (reportName: string) => {
+    toast({
+      title: "Downloading Excel",
+      description: `${reportName} is being downloaded as Excel file.`,
+    });
   };
 
-  // Sample data for charts
-  const salesVsExpensesData = [
-    { name: "Jan", income: 95000, expense: 62000 },
-    { name: "Feb", income: 85000, expense: 58000 },
-    { name: "Mar", income: 110000, expense: 71000 },
-    { name: "Apr", income: 98000, expense: 63000 },
-    { name: "May", income: 115000, expense: 68000 },
-    { name: "Jun", income: 105000, expense: 64000 },
-  ];
-  
-  const profitMarginData = [
-    { name: "Jan", value: 32 },
-    { name: "Feb", value: 28 },
-    { name: "Mar", value: 35 },
-    { name: "Apr", value: 30 },
-    { name: "May", value: 38 },
-    { name: "Jun", value: 33 },
+  const handleDownloadPdf = (reportName: string) => {
+    toast({
+      title: "Downloading PDF",
+      description: `${reportName} is being downloaded as PDF file.`,
+    });
+  };
+
+  const handleCloseReportViewer = () => {
+    setReportViewerOpen(false);
+    setActiveReport(null);
+  };
+
+  // Filter reports based on search query and category
+  const filterReports = (reports: any[]) => {
+    return reports.filter(report => {
+      const matchesSearch = report.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = reportCategory === "all" || report.category === reportCategory;
+      return matchesSearch && matchesCategory;
+    });
+  };
+
+  // Define reports by category
+  const salesReports = [
+    {
+      title: "Sales Performance",
+      description: "Daily, weekly, and monthly sales performance metrics",
+      icon: <BarChart3 size={18} className="text-blue-600" />,
+      category: "sales"
+    },
+    {
+      title: "Product Sales Analysis",
+      description: "Sales breakdown by product, category, and trends",
+      icon: <Box size={18} className="text-green-600" />,
+      category: "sales"
+    },
+    {
+      title: "Customer Purchase Patterns",
+      description: "Analysis of customer buying habits and preferences",
+      icon: <Package size={18} className="text-purple-600" />,
+      category: "sales"
+    },
+    {
+      title: "Invoice Summary",
+      description: "Summary of all invoices generated in the selected period",
+      icon: <FileMinus size={18} className="text-red-600" />,
+      category: "sales"
+    }
   ];
 
-  const inventoryValueData = [
-    { name: "Raw Materials", value: 345000 },
-    { name: "Finished Goods", value: 480000 },
-    { name: "Work in Progress", value: 120000 },
-    { name: "Packaging", value: 45000 },
-    { name: "Spare Parts", value: 65000 },
-  ];
-
-  // Financial Report Types
-  const financialReports = [
-    { name: "Bill Wise Profit", icon: <TrendingUp size={16} className="text-emerald-600" /> },
-    { name: "Sales Summary", icon: <ShoppingBag size={16} className="text-blue-600" /> },
-    { name: "Daybook", icon: <Calendar size={16} className="text-indigo-600" /> },
-    { name: "Profit and Loss", icon: <FileBarChart size={16} className="text-red-600" /> },
-    { name: "Party Statement (Ledger)", icon: <FileText size={16} className="text-amber-600" /> },
-    { name: "Balance Sheet", icon: <FileSpreadsheet size={16} className="text-green-600" /> },
-    { name: "Cash and Bank (All Payments)", icon: <Wallet size={16} className="text-purple-600" /> },
-  ];
-
-  // Inventory Report Types
   const inventoryReports = [
-    { name: "Stock Summary", icon: <Box size={16} className="text-blue-600" /> },
-    { name: "Price & Stock Summary", icon: <FileText size={16} className="text-emerald-600" /> },
+    {
+      title: "Inventory Valuation",
+      description: "Current value of inventory by location and category",
+      icon: <DollarSign size={18} className="text-green-600" />,
+      category: "inventory"
+    },
+    {
+      title: "Stock Movement Analysis",
+      description: "Trends in inventory movement and turnover rates",
+      icon: <TrendingUp size={18} className="text-blue-600" />,
+      category: "inventory"
+    },
+    {
+      title: "Low Stock Alert Report",
+      description: "Items that are below minimum stock threshold",
+      icon: <ShoppingBag size={18} className="text-amber-600" />,
+      category: "inventory"
+    },
+    {
+      title: "Inventory Aging Report",
+      description: "Analysis of slow-moving and stagnant inventory",
+      icon: <Calendar size={18} className="text-purple-600" />,
+      category: "inventory"
+    }
   ];
 
-  // Entity Report Types
-  const entityReports = [
-    { name: "Party Reports", icon: <Users size={16} className="text-blue-600" /> },
-    { name: "Item Reports", icon: <Package size={16} className="text-green-600" /> },
+  const financeReports = [
+    {
+      title: "Profit & Loss Statement",
+      description: "Comprehensive P&L statement for the selected period",
+      icon: <CircleDollarSign size={18} className="text-green-600" />,
+      category: "finance"
+    },
+    {
+      title: "Expense Analysis",
+      description: "Breakdown of expenses by category and comparison",
+      icon: <TrendingUp size={18} className="text-red-600" />,
+      category: "finance"
+    },
+    {
+      title: "Cash Flow Report",
+      description: "Cash inflow and outflow analysis with projections",
+      icon: <DollarSign size={18} className="text-blue-600" />,
+      category: "finance"
+    },
+    {
+      title: "Accounts Receivable Aging",
+      description: "Outstanding receivables categorized by age",
+      icon: <FileText size={18} className="text-amber-600" />,
+      category: "finance"
+    }
   ];
 
-  // Transaction Report Types
-  const transactionReports = [
-    { name: "GST Reports", icon: <Receipt size={16} className="text-purple-600" /> },
-    { name: "Transaction Reports", icon: <FileText size={16} className="text-indigo-600" /> },
-    { name: "Expense Reports", icon: <FileMinus size={16} className="text-red-600" /> },
-    { name: "Purchase Reports", icon: <FileUp size={16} className="text-amber-600" /> },
-    { name: "BNPL Reports", icon: <FileText size={16} className="text-pink-600" /> },
+  const operationsReports = [
+    {
+      title: "Factory Performance",
+      description: "Production metrics and efficiency analysis",
+      icon: <Factory size={18} className="text-orange-600" />,
+      category: "operations"
+    },
+    {
+      title: "Store Performance",
+      description: "Retail store metrics and performance analysis",
+      icon: <Store size={18} className="text-blue-600" />,
+      category: "operations"
+    },
+    {
+      title: "Vendor Performance",
+      description: "Supplier reliability, quality, and delivery metrics",
+      icon: <Truck size={18} className="text-purple-600" />,
+      category: "operations"
+    },
+    {
+      title: "Staff Productivity",
+      description: "Employee performance and productivity metrics",
+      icon: <Users size={18} className="text-green-600" />,
+      category: "operations"
+    }
   ];
 
-  // Performance Report Types
-  const performanceReports = [
-    { name: "Store Performance", icon: <Store size={16} className="text-blue-600" /> },
-    { name: "Factory Performance", icon: <Factory size={16} className="text-orange-600" /> },
-    { name: "Vendor Performance", icon: <Truck size={16} className="text-green-600" /> },
-  ];
+  // Filter reports based on current filter settings
+  const filteredSalesReports = filterReports(salesReports);
+  const filteredInventoryReports = filterReports(inventoryReports);
+  const filteredFinanceReports = filterReports(financeReports);
+  const filteredOperationsReports = filterReports(operationsReports);
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -152,458 +232,264 @@ const ReportsDashboard = () => {
         <DashboardHeader toggleSidebar={toggleSidebar} />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-unnati-dark">Reports Dashboard</h1>
-            <p className="text-gray-500">Generate and analyze business reports</p>
-          </div>
-          
-          {/* Filter Controls */}
-          <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap items-center gap-4">
-            <div className="flex items-center">
-              <Calendar className="mr-2 h-4 w-4 text-gray-500" />
-              <select className="rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
-                <option>Last 7 days</option>
-                <option>Last 30 days</option>
-                <option>Last 90 days</option>
-                <option>This year</option>
-                <option>Custom range</option>
-              </select>
+          <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-unnati-dark">Reports Dashboard</h1>
+              <p className="text-gray-500">Generate and analyze business reports</p>
             </div>
             
-            <div className="flex items-center">
-              <Filter className="mr-2 h-4 w-4 text-gray-500" />
-              <select className="rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
-                <option>All Categories</option>
-                <option>Sales</option>
-                <option>Inventory</option>
-                <option>Expenses</option>
-                <option>Profits</option>
-              </select>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select value={dateRange} onValueChange={setDateRange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="yesterday">Yesterday</SelectItem>
+                  <SelectItem value="last7days">Last 7 Days</SelectItem>
+                  <SelectItem value="last30days">Last 30 Days</SelectItem>
+                  <SelectItem value="thisMonth">This Month</SelectItem>
+                  <SelectItem value="lastMonth">Last Month</SelectItem>
+                  <SelectItem value="thisYear">This Year</SelectItem>
+                  <SelectItem value="custom">Custom Range</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input 
+                  placeholder="Search reports..." 
+                  className="pl-9 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-            
-            <Button variant="outline" size="sm" className="ml-auto">
-              <Download className="mr-2 h-4 w-4" />
-              Export All
-            </Button>
-            
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
           </div>
-          
-          {/* Reports Tabs */}
-          <Tabs defaultValue="financial" className="w-full mb-6">
-            <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-6 gap-2">
-              <TabsTrigger value="financial" className="flex items-center gap-1">
-                <DollarSign size={14} />
-                <span>Financial</span>
-              </TabsTrigger>
-              <TabsTrigger value="inventory" className="flex items-center gap-1">
-                <Package size={14} />
-                <span>Inventory</span>
-              </TabsTrigger>
-              <TabsTrigger value="entity" className="flex items-center gap-1">
-                <Users size={14} />
-                <span>Entity</span>
-              </TabsTrigger>
-              <TabsTrigger value="transaction" className="flex items-center gap-1">
-                <Receipt size={14} />
-                <span>Transaction</span>
-              </TabsTrigger>
-              <TabsTrigger value="performance" className="flex items-center gap-1">
-                <TrendingUp size={14} />
-                <span>Performance</span>
-              </TabsTrigger>
-              <TabsTrigger value="all" className="flex items-center gap-1">
-                <FileText size={14} />
-                <span>All Reports</span>
-              </TabsTrigger>
+
+          {/* Report Viewer - Shows when a report is selected */}
+          {reportViewerOpen && activeReport && (
+            <Card className="mb-6">
+              <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                <CardTitle>{activeReport}</CardTitle>
+                <Button variant="outline" size="sm" onClick={handleCloseReportViewer}>
+                  Close
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <ReportViewer reportName={activeReport} />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Report Categories */}
+          <Tabs defaultValue="all" onValueChange={setReportCategory} className="mb-6">
+            <TabsList className="w-full sm:w-auto grid grid-cols-5 mb-4">
+              <TabsTrigger value="all">All Reports</TabsTrigger>
+              <TabsTrigger value="sales">Sales</TabsTrigger>
+              <TabsTrigger value="inventory">Inventory</TabsTrigger>
+              <TabsTrigger value="finance">Finance</TabsTrigger>
+              <TabsTrigger value="operations">Operations</TabsTrigger>
             </TabsList>
-            
-            {/* Financial Reports Tab */}
-            <TabsContent value="financial" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {financialReports.map((report) => (
-                  <ReportCard
-                    key={report.name}
-                    title={report.name}
-                    icon={report.icon}
-                    onView={() => handleViewReport(report.name)}
-                    onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                    onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            {/* Inventory Reports Tab */}
-            <TabsContent value="inventory" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {inventoryReports.map((report) => (
-                  <ReportCard
-                    key={report.name}
-                    title={report.name}
-                    icon={report.icon}
-                    onView={() => handleViewReport(report.name)}
-                    onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                    onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            {/* Entity Reports Tab */}
-            <TabsContent value="entity" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {entityReports.map((report) => (
-                  <ReportCard
-                    key={report.name}
-                    title={report.name}
-                    icon={report.icon}
-                    onView={() => handleViewReport(report.name)}
-                    onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                    onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            {/* Transaction Reports Tab */}
-            <TabsContent value="transaction" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {transactionReports.map((report) => (
-                  <ReportCard
-                    key={report.name}
-                    title={report.name}
-                    icon={report.icon}
-                    onView={() => handleViewReport(report.name)}
-                    onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                    onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            {/* Performance Reports Tab */}
-            <TabsContent value="performance" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {performanceReports.map((report) => (
-                  <ReportCard
-                    key={report.name}
-                    title={report.name}
-                    icon={report.icon}
-                    onView={() => handleViewReport(report.name)}
-                    onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                    onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            {/* All Reports Tab */}
+
             <TabsContent value="all" className="space-y-6">
-              <Accordion type="single" collapsible defaultValue="financial" className="w-full">
-                <AccordionItem value="financial">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <DollarSign size={18} className="text-blue-600" />
-                      Financial Reports
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {financialReports.map((report) => (
-                        <ReportCard
-                          key={report.name}
-                          title={report.name}
-                          icon={report.icon}
-                          onView={() => handleViewReport(report.name)}
-                          onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                          onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="inventory">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <Package size={18} className="text-green-600" />
-                      Inventory Reports
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {inventoryReports.map((report) => (
-                        <ReportCard
-                          key={report.name}
-                          title={report.name}
-                          icon={report.icon}
-                          onView={() => handleViewReport(report.name)}
-                          onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                          onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="entity">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <Users size={18} className="text-purple-600" />
-                      Entity Reports
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {entityReports.map((report) => (
-                        <ReportCard
-                          key={report.name}
-                          title={report.name}
-                          icon={report.icon}
-                          onView={() => handleViewReport(report.name)}
-                          onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                          onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="transaction">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <Receipt size={18} className="text-amber-600" />
-                      Transaction Reports
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {transactionReports.map((report) => (
-                        <ReportCard
-                          key={report.name}
-                          title={report.name}
-                          icon={report.icon}
-                          onView={() => handleViewReport(report.name)}
-                          onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                          onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="performance">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp size={18} className="text-red-600" />
-                      Performance Reports
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                      {performanceReports.map((report) => (
-                        <ReportCard
-                          key={report.name}
-                          title={report.name}
-                          icon={report.icon}
-                          onView={() => handleViewReport(report.name)}
-                          onDownloadExcel={() => handleDownloadReport(report.name, 'excel')}
-                          onDownloadPdf={() => handleDownloadReport(report.name, 'pdf')}
-                        />
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+              {/* Sales Reports Section */}
+              {filteredSalesReports.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Sales Reports</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredSalesReports.map((report, index) => (
+                      <ReportCard
+                        key={`sales-${index}`}
+                        title={report.title}
+                        icon={report.icon}
+                        description={report.description}
+                        onView={() => handleViewReport(report.title)}
+                        onDownloadExcel={() => handleDownloadExcel(report.title)}
+                        onDownloadPdf={() => handleDownloadPdf(report.title)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Inventory Reports Section */}
+              {filteredInventoryReports.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Inventory Reports</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredInventoryReports.map((report, index) => (
+                      <ReportCard
+                        key={`inventory-${index}`}
+                        title={report.title}
+                        icon={report.icon}
+                        description={report.description}
+                        onView={() => handleViewReport(report.title)}
+                        onDownloadExcel={() => handleDownloadExcel(report.title)}
+                        onDownloadPdf={() => handleDownloadPdf(report.title)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Finance Reports Section */}
+              {filteredFinanceReports.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Finance Reports</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredFinanceReports.map((report, index) => (
+                      <ReportCard
+                        key={`finance-${index}`}
+                        title={report.title}
+                        icon={report.icon}
+                        description={report.description}
+                        onView={() => handleViewReport(report.title)}
+                        onDownloadExcel={() => handleDownloadExcel(report.title)}
+                        onDownloadPdf={() => handleDownloadPdf(report.title)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Operations Reports Section */}
+              {filteredOperationsReports.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Operations Reports</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredOperationsReports.map((report, index) => (
+                      <ReportCard
+                        key={`operations-${index}`}
+                        title={report.title}
+                        icon={report.icon}
+                        description={report.description}
+                        onView={() => handleViewReport(report.title)}
+                        onDownloadExcel={() => handleDownloadExcel(report.title)}
+                        onDownloadPdf={() => handleDownloadPdf(report.title)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* No reports found */}
+              {filteredSalesReports.length === 0 && 
+               filteredInventoryReports.length === 0 && 
+               filteredFinanceReports.length === 0 && 
+               filteredOperationsReports.length === 0 && (
+                <div className="text-center py-12">
+                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No reports found</h3>
+                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters to find what you're looking for.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="sales" className="space-y-6">
+              {filteredSalesReports.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredSalesReports.map((report, index) => (
+                    <ReportCard
+                      key={`sales-tab-${index}`}
+                      title={report.title}
+                      icon={report.icon}
+                      description={report.description}
+                      onView={() => handleViewReport(report.title)}
+                      onDownloadExcel={() => handleDownloadExcel(report.title)}
+                      onDownloadPdf={() => handleDownloadPdf(report.title)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No sales reports found</h3>
+                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="inventory" className="space-y-6">
+              {filteredInventoryReports.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredInventoryReports.map((report, index) => (
+                    <ReportCard
+                      key={`inventory-tab-${index}`}
+                      title={report.title}
+                      icon={report.icon}
+                      description={report.description}
+                      onView={() => handleViewReport(report.title)}
+                      onDownloadExcel={() => handleDownloadExcel(report.title)}
+                      onDownloadPdf={() => handleDownloadPdf(report.title)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Package className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No inventory reports found</h3>
+                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="finance" className="space-y-6">
+              {filteredFinanceReports.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredFinanceReports.map((report, index) => (
+                    <ReportCard
+                      key={`finance-tab-${index}`}
+                      title={report.title}
+                      icon={report.icon}
+                      description={report.description}
+                      onView={() => handleViewReport(report.title)}
+                      onDownloadExcel={() => handleDownloadExcel(report.title)}
+                      onDownloadPdf={() => handleDownloadPdf(report.title)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <DollarSign className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No finance reports found</h3>
+                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="operations" className="space-y-6">
+              {filteredOperationsReports.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredOperationsReports.map((report, index) => (
+                    <ReportCard
+                      key={`operations-tab-${index}`}
+                      title={report.title}
+                      icon={report.icon}
+                      description={report.description}
+                      onView={() => handleViewReport(report.title)}
+                      onDownloadExcel={() => handleDownloadExcel(report.title)}
+                      onDownloadPdf={() => handleDownloadPdf(report.title)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Factory className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No operations reports found</h3>
+                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
-          
-          {/* Report Viewer Section */}
-          {selectedReport && (
-            <div id="report-viewer" className="mb-6">
-              <ReportViewer 
-                reportName={selectedReport}
-                onDownloadExcel={() => handleDownloadReport(selectedReport, 'excel')}
-                onDownloadPdf={() => handleDownloadReport(selectedReport, 'pdf')}
-                onPrint={() => toast({
-                  title: "Print Started",
-                  description: `${selectedReport} is being prepared for printing.`,
-                })}
-              />
-            </div>
-          )}
-          
-          {/* Data Visualization */}
-          {!selectedReport && (
-            <>
-              <h2 className="text-xl font-bold mb-4 text-unnati-dark">Data Visualization</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <ChartCard 
-                  title="Sales vs Expenses (Last 6 months)" 
-                  type="bar" 
-                  data={salesVsExpensesData} 
-                />
-                <ChartCard 
-                  title="Profit Margin %" 
-                  type="line" 
-                  data={profitMarginData}
-                />
-              </div>
-            
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <ChartCard 
-                  title="Inventory Value by Category" 
-                  type="pie" 
-                  data={inventoryValueData}
-                />
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recently Generated Reports</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center">
-                          <FileBarChart className="h-5 w-5 text-blue-600 mr-3" />
-                          <div>
-                            <p className="font-medium">Monthly Sales Report</p>
-                            <p className="text-xs text-gray-500">Generated on 08 Apr, 2025</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleViewReport("Monthly Sales Report")}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport("Monthly Sales Report", 'excel')}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center">
-                          <FileText className="h-5 w-5 text-green-600 mr-3" />
-                          <div>
-                            <p className="font-medium">Q1 Financial Summary</p>
-                            <p className="text-xs text-gray-500">Generated on 05 Apr, 2025</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleViewReport("Q1 Financial Summary")}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport("Q1 Financial Summary", 'excel')}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center">
-                          <FilePieChart className="h-5 w-5 text-purple-600 mr-3" />
-                          <div>
-                            <p className="font-medium">Inventory Valuation Report</p>
-                            <p className="text-xs text-gray-500">Generated on 03 Apr, 2025</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleViewReport("Inventory Valuation Report")}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport("Inventory Valuation Report", 'excel')}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center">
-                          <FileSpreadsheet className="h-5 w-5 text-amber-600 mr-3" />
-                          <div>
-                            <p className="font-medium">March Expense Analysis</p>
-                            <p className="text-xs text-gray-500">Generated on 01 Apr, 2025</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleViewReport("March Expense Analysis")}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport("March Expense Analysis", 'excel')}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </>
-          )}
-          
-          {/* Performance Analysis Sections */}
-          <h2 className="text-xl font-bold mb-4 text-unnati-dark">Performance Analysis</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <StorePerformanceReport />
+
+          {/* Performance Overview */}
+          <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Performance Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <FactoryPerformanceReport />
+            <StorePerformanceReport />
             <VendorPerformanceReport />
           </div>
-          
-          {/* Report Schedules */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Scheduled Reports</CardTitle>
-                <Button variant="outline" size="sm">Add Schedule</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium">Daily Sales Summary</p>
-                    <p className="text-sm text-gray-500">Every day at 9:00 PM</p>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3">
-                      Active
-                    </span>
-                    <Button variant="ghost" size="sm">Edit</Button>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium">Weekly Expense Report</p>
-                    <p className="text-sm text-gray-500">Every Sunday at 10:00 AM</p>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3">
-                      Active
-                    </span>
-                    <Button variant="ghost" size="sm">Edit</Button>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium">Monthly Financial Statement</p>
-                    <p className="text-sm text-gray-500">1st of every month at 8:00 AM</p>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3">
-                      Active
-                    </span>
-                    <Button variant="ghost" size="sm">Edit</Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </main>
       </div>
     </div>

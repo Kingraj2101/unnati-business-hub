@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Search, 
@@ -53,7 +52,6 @@ interface User {
   lastLogin: string;
 }
 
-// Sample data
 const sampleUsers: User[] = [
   { 
     id: "USR-001", 
@@ -127,7 +125,6 @@ const UserManagementList: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast();
 
-  // Filter users based on search query, role and status
   const filteredUsers = sampleUsers.filter(user => {
     const matchesSearch = 
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -186,7 +183,6 @@ const UserManagementList: React.FC = () => {
   const handleRefresh = () => {
     setIsRefreshing(true);
     
-    // Simulate refresh
     setTimeout(() => {
       setIsRefreshing(false);
       toast({
@@ -293,8 +289,7 @@ const UserManagementList: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant="outline"
-                        className={
+                        variant={
                           user.role === "admin" 
                             ? "bg-purple-100 text-purple-800 hover:bg-purple-100" 
                             : user.role === "manager"
@@ -314,10 +309,10 @@ const UserManagementList: React.FC = () => {
                       <Badge
                         variant={
                           user.status === "active" 
-                            ? "success" 
+                            ? "default" 
                             : user.status === "inactive"
                             ? "destructive"
-                            : "default"
+                            : "secondary"
                         }
                         className={
                           user.status === "active" 

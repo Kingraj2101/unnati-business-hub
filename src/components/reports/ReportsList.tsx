@@ -201,9 +201,9 @@ const ReportsList: React.FC = () => {
                         <Badge
                           variant={
                             report.status === "ready" 
-                              ? "success" 
+                              ? "default" 
                               : report.status === "processing"
-                              ? "default"
+                              ? "secondary"
                               : "destructive"
                           }
                           className={

@@ -87,7 +87,6 @@ const BillingReportCreator: React.FC<BillingReportCreatorProps> = ({
       toast({
         title: "Download Complete",
         description: `Your ${format.toUpperCase()} report has been downloaded.`,
-        icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
       });
     }, 1000);
   };

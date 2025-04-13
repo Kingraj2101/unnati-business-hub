@@ -4,37 +4,74 @@ import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
 import StatCard from "@/components/dashboard/StatCard";
+import ChartCard from "@/components/dashboard/ChartCard";
 import { 
-  PackageCheck, 
+  ShoppingCart, 
+  Package, 
   Truck, 
-  CreditCard,
+  CreditCard, 
+  FileText, 
+  CircleDollarSign,
   Calendar,
-  ShoppingBag,
-  FileClock,
-  AlertCircle,
   CheckCircle2,
-  Clock
+  ClipboardList,
+  Bell,
+  AlertCircle,
+  ArrowUp,
+  ArrowDown,
+  Clock,
+  BarChart3,
+  BoxesIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import SearchBar from "@/components/dashboard/SearchBar";
+import { useToast } from "@/hooks/use-toast";
 
 const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const userType = localStorage.getItem("userType");
+  const { toast } = useToast();
 
-  // Redirect to login if not authenticated or not a vendor user
+  // Redirect if not authenticated or not vendor user
   if (!isAuthenticated || userType !== "vendor") {
-    return <Navigate to="/login" />;
+    localStorage.setItem("userType", "vendor"); // For demo purposes
+    // return <Navigate to="/login" />;
   }
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleQuickAction = (action: string) => {
+    toast({
+      title: `${action} Started`,
+      description: `You've initiated the ${action.toLowerCase()} process.`,
+    });
+  };
+
+  // Sample data for charts
+  const orderTrendData = [
+    { name: "Jan", value: 24 },
+    { name: "Feb", value: 18 },
+    { name: "Mar", value: 32 },
+    { name: "Apr", value: 28 },
+    { name: "May", value: 35 },
+    { name: "Jun", value: 30 },
+  ];
+
+  const productCategoryData = [
+    { name: "Wires", value: 40 },
+    { name: "Lights", value: 25 },
+    { name: "Switches", value: 20 },
+    { name: "Others", value: 15 },
+  ];
+
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -42,189 +79,344 @@ const VendorDashboard = () => {
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-unnati-dark">Vendor Dashboard</h1>
-            <p className="text-gray-500">Manage your orders, payments and deliveries</p>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <BoxesIcon className="h-6 w-6 text-unnati-primary" />
+              Vendor Dashboard
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">Manage orders, deliveries, and payment status</p>
+          </div>
+          
+          {/* Search and Quick Actions */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
+            <SearchBar placeholder="Search vendor dashboard..." dashboardType="vendor" />
+            
+            <div className="flex gap-2">
+              <Button 
+                className="gap-2 bg-unnati-primary" 
+                onClick={() => handleQuickAction("Update Product Catalog")}
+              >
+                <Package className="h-4 w-4" />
+                Update Products
+              </Button>
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => handleQuickAction("Track Orders")}
+              >
+                <Truck className="h-4 w-4" />
+                Track Orders
+              </Button>
+            </div>
           </div>
           
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <StatCard
               title="Active Orders"
-              value="8"
-              icon={<PackageCheck size={20} />}
-              change={{ value: "2 new", positive: true }}
+              value="16"
+              icon={<ShoppingCart size={20} className="text-blue-500" />}
+              change={{ value: "3", positive: true }}
+              className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
               title="Pending Deliveries"
-              value="4"
-              icon={<Truck size={20} />}
+              value="8"
+              icon={<Truck size={20} className="text-amber-500" />}
+              change={{ value: "2", positive: false }}
+              className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
-              title="Payments Due"
-              value="₹56,780"
-              icon={<CreditCard size={20} />}
-              change={{ value: "₹12,500 overdue", positive: false }}
+              title="Pending Payments"
+              value="₹2,85,450"
+              icon={<CreditCard size={20} className="text-red-500" />}
+              change={{ value: "12.5%", positive: false }}
+              className="border-l-4 border-l-red-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
-              title="Next Delivery"
-              value="Tomorrow"
-              icon={<Calendar size={20} />}
+              title="This Month Revenue"
+              value="₹4,35,250"
+              icon={<CircleDollarSign size={20} className="text-green-500" />}
+              change={{ value: "8.7%", positive: true }}
+              className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
           </div>
           
-          {/* Order Status */}
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Order Status</h2>
-              <Button variant="outline" size="sm">
-                View All Orders
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              {[
-                { id: "ORD-5623", status: "processing", date: "10 Apr 2025", amount: "₹23,450", progress: 35 },
-                { id: "ORD-5594", status: "shipped", date: "08 Apr 2025", amount: "₹16,200", progress: 75 },
-                { id: "ORD-5571", status: "delivered", date: "05 Apr 2025", amount: "₹8,900", progress: 100 },
-                { id: "ORD-5562", status: "pending", date: "03 Apr 2025", amount: "₹12,340", progress: 15 }
-              ].map((order) => (
-                <div key={order.id} className="p-4 border rounded-md">
-                  <div className="flex flex-wrap justify-between items-center mb-3">
-                    <div>
-                      <span className="font-semibold">{order.id}</span>
-                      <Badge 
-                        className={`ml-2 ${
-                          order.status === "delivered" 
-                            ? "bg-green-100 text-green-800" 
-                            : order.status === "shipped" 
-                            ? "bg-blue-100 text-blue-800" 
-                            : order.status === "processing" 
-                            ? "bg-amber-100 text-amber-800" 
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-gray-500">{order.date} • {order.amount}</div>
-                  </div>
-                  <div className="mb-1 flex justify-between text-xs">
-                    <span>Order Progress</span>
-                    <span>{order.progress}%</span>
-                  </div>
-                  <Progress value={order.progress} className="h-2" />
-                  <div className="flex justify-end mt-2">
-                    <Button variant="link" size="sm" className="h-auto p-0">
-                      Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Notifications and Payment Info */}
+          {/* Order Trends & Alerts */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Notifications</h2>
-              <div className="space-y-4">
-                <div className="flex p-3 rounded-md bg-amber-50 border border-amber-200">
-                  <AlertCircle className="text-amber-500 mr-3 flex-shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <p className="font-medium text-amber-800">Order #ORD-5594 Requires Attention</p>
-                    <p className="text-sm text-amber-700">The delivery address has been updated. Please confirm before shipping.</p>
-                  </div>
-                </div>
-                
-                <div className="flex p-3 rounded-md bg-green-50 border border-green-200">
-                  <CheckCircle2 className="text-green-500 mr-3 flex-shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <p className="font-medium text-green-800">Payment Received</p>
-                    <p className="text-sm text-green-700">Payment of ₹18,650 has been received for invoice #INV-1042.</p>
-                  </div>
-                </div>
-                
-                <div className="flex p-3 rounded-md bg-blue-50 border border-blue-200">
-                  <Truck className="text-blue-500 mr-3 flex-shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <p className="font-medium text-blue-800">New Order Received</p>
-                    <p className="text-sm text-blue-700">You have received a new order #ORD-5623 worth ₹23,450.</p>
-                  </div>
-                </div>
-                
-                <div className="flex p-3 rounded-md bg-red-50 border border-red-200">
-                  <Clock className="text-red-500 mr-3 flex-shrink-0 mt-0.5" size={18} />
-                  <div>
-                    <p className="font-medium text-red-800">Overdue Payment Reminder</p>
-                    <p className="text-sm text-red-700">Payment for invoice #INV-986 (₹12,500) is overdue by 7 days.</p>
-                  </div>
-                </div>
-              </div>
+            <div className="lg:col-span-2">
+              <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+                <CardHeader>
+                  <CardTitle>Order Trends (Last 6 Months)</CardTitle>
+                  <CardDescription>Monthly order count</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartCard title="" type="bar" data={orderTrendData} />
+                </CardContent>
+              </Card>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-4">Payment Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Next Payment Due</p>
-                  <p className="font-semibold">₹24,650</p>
-                  <p className="text-xs text-gray-500">Due on 15 Apr 2025</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-500">Payment Method</p>
-                  <p className="font-semibold">Bank Transfer</p>
-                  <p className="text-xs text-gray-500">Account ending in 4589</p>
-                </div>
-                
-                <div className="border-t pt-4">
-                  <p className="text-sm font-medium">Recent Payments</p>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>05 Apr 2025</span>
-                      <span className="font-medium">₹18,650</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>28 Mar 2025</span>
-                      <span className="font-medium">₹23,420</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>15 Mar 2025</span>
-                      <span className="font-medium">₹16,780</span>
+            <div>
+              <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 h-full">
+                <CardHeader>
+                  <CardTitle>Alerts & Notifications</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800 flex items-start gap-3">
+                    <Bell className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-blue-800 dark:text-blue-300">New Order Received</p>
+                      <p className="text-sm text-blue-700 dark:text-blue-400">Order #ORD-2854 for ₹24,500</p>
+                      <Button variant="link" className="p-0 h-auto text-sm text-blue-600 dark:text-blue-300">View Order</Button>
                     </div>
                   </div>
-                </div>
-                
-                <Button className="w-full bg-unnati-primary hover:bg-unnati-primary/90">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Make Payment
-                </Button>
-              </div>
+                  
+                  <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800 flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-amber-800 dark:text-amber-300">Order Deadline</p>
+                      <p className="text-sm text-amber-700 dark:text-amber-400">Order #ORD-2845 due in 2 days</p>
+                      <Button variant="link" className="p-0 h-auto text-sm text-amber-600 dark:text-amber-300">Process Now</Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-green-800 dark:text-green-300">Payment Received</p>
+                      <p className="text-sm text-green-700 dark:text-green-400">₹38,500 for invoice #INV-3845</p>
+                      <Button variant="link" className="p-0 h-auto text-sm text-green-600 dark:text-green-300">View Details</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
           
-          {/* Quick Actions */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto py-6 flex flex-col items-center justify-center">
-                <ShoppingBag className="h-6 w-6 mb-2" />
-                <span>New Order</span>
+          {/* Product Categories & Payment Status */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+              <CardHeader>
+                <CardTitle>Products by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ChartCard title="" type="pie" data={productCategoryData} />
+              </CardContent>
+            </Card>
+            
+            <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Payment Status</span>
+                  <Button variant="outline" size="sm" className="gap-1" onClick={() => handleQuickAction("View All Payments")}>
+                    <CreditCard className="h-4 w-4" />
+                    <span>View All</span>
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">Payments Received</p>
+                      <p className="text-2xl font-bold">₹4,35,250</p>
+                    </div>
+                    <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <ArrowDown className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">Pending Payments</p>
+                      <p className="text-2xl font-bold">₹2,85,450</p>
+                    </div>
+                    <div className="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t dark:border-gray-800">
+                    <div className="flex justify-between mb-1 text-sm">
+                      <span>Overall Payment Status</span>
+                      <span>60% Received</span>
+                    </div>
+                    <Progress value={60} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Quick Access Workflows */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-4">Quick Access</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("Manage Orders")}
+              >
+                <ShoppingCart className="h-6 w-6 text-unnati-primary" />
+                <span>Manage Orders</span>
               </Button>
-              <Button variant="outline" className="h-auto py-6 flex flex-col items-center justify-center">
-                <Truck className="h-6 w-6 mb-2" />
-                <span>Schedule Delivery</span>
+              
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("Schedule Deliveries")}
+              >
+                <Truck className="h-6 w-6 text-unnati-primary" />
+                <span>Deliveries</span>
               </Button>
-              <Button variant="outline" className="h-auto py-6 flex flex-col items-center justify-center">
-                <FileClock className="h-6 w-6 mb-2" />
-                <span>View Invoices</span>
+              
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("Update Products")}
+              >
+                <Package className="h-6 w-6 text-unnati-primary" />
+                <span>Products</span>
               </Button>
-              <Button variant="outline" className="h-auto py-6 flex flex-col items-center justify-center">
-                <CreditCard className="h-6 w-6 mb-2" />
-                <span>Payment History</span>
+              
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("Payment Status")}
+              >
+                <CreditCard className="h-6 w-6 text-unnati-primary" />
+                <span>Payments</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("View Invoices")}
+              >
+                <FileText className="h-6 w-6 text-unnati-primary" />
+                <span>Invoices</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="h-auto py-6 flex flex-col items-center justify-center gap-3 hover:bg-unnati-primary/10"
+                onClick={() => handleQuickAction("View Reports")}
+              >
+                <BarChart3 className="h-6 w-6 text-unnati-primary" />
+                <span>Reports</span>
               </Button>
             </div>
           </div>
+          
+          {/* Recent Orders */}
+          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 mb-6">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Recent Orders</CardTitle>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => handleQuickAction("View All Orders")}>
+                <ClipboardList className="h-4 w-4" />
+                <span>View All</span>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    {[
+                      { id: "ORD-2854", customer: "Unnati Traders", date: "12 Apr 2025", amount: "₹24,500", status: "New" },
+                      { id: "ORD-2853", customer: "Modern Electricals", date: "10 Apr 2025", amount: "₹18,750", status: "Processing" },
+                      { id: "ORD-2852", customer: "City Lights", date: "08 Apr 2025", amount: "₹32,250", status: "Shipped" },
+                      { id: "ORD-2851", customer: "Sharma Electronics", date: "05 Apr 2025", amount: "₹15,800", status: "Delivered" },
+                      { id: "ORD-2850", customer: "Premium Switches", date: "03 Apr 2025", amount: "₹22,450", status: "Delivered" }
+                    ].map((order) => (
+                      <tr key={order.id}>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400">{order.id}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{order.customer}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{order.date}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{order.amount}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <Badge
+                            className={`${
+                              order.status === "New" 
+                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" 
+                                : order.status === "Processing" 
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                                : order.status === "Shipped"
+                                ? "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300"
+                                : "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                            }`}
+                          >
+                            {order.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Upcoming Deliveries */}
+          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Upcoming Deliveries</CardTitle>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => handleQuickAction("View All Deliveries")}>
+                <Truck className="h-4 w-4" />
+                <span>View All</span>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Delivery ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order Ref.</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Delivery Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    {[
+                      { id: "DEL-485", order: "ORD-2845", customer: "Modern Electricals", date: "14 Apr 2025", status: "Scheduled" },
+                      { id: "DEL-484", order: "ORD-2842", customer: "City Lights", date: "13 Apr 2025", status: "Scheduled" },
+                      { id: "DEL-483", order: "ORD-2840", customer: "Sharma Electronics", date: "13 Apr 2025", status: "In Transit" },
+                      { id: "DEL-482", order: "ORD-2838", customer: "Premium Switches", date: "12 Apr 2025", status: "In Transit" }
+                    ].map((delivery) => (
+                      <tr key={delivery.id}>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-600 dark:text-blue-400">{delivery.id}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{delivery.order}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{delivery.customer}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{delivery.date}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <Badge
+                            className={`${
+                              delivery.status === "Scheduled" 
+                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" 
+                                : delivery.status === "In Transit" 
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                                : "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                            }`}
+                          >
+                            {delivery.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </main>
       </div>
     </div>

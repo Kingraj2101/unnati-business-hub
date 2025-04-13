@@ -17,12 +17,21 @@ import {
   ArrowUpRight,
   Share2,
   Printer,
-  Mail
+  Mail,
+  Plus,
+  CreditCard,
+  Package,
+  Receipt,
+  FilePlus2,
+  FileDown,
+  ListFilter,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ChartCard from "@/components/dashboard/ChartCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -39,10 +48,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import ReportsList from "@/components/reports/ReportsList";
+import BillingReportCreator from "@/components/dashboard/billing/BillingReportCreator";
+import ReportViewer from "@/components/reports/ReportViewer";
+import ReportCard from "@/components/reports/ReportCard";
+import GlobalSearch from "@/components/dashboard/GlobalSearch";
 
 const ReportsDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("last6months");
+  const [activeTab, setActiveTab] = useState("financial");
+  const [showReportCreator, setShowReportCreator] = useState(false);
+  const [showReportViewer, setShowReportViewer] = useState(false);
+  const [reportViewerName, setReportViewerName] = useState("Report");
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const { toast } = useToast();
 
@@ -60,6 +78,35 @@ const ReportsDashboard = () => {
       title: "Report Export Started",
       description: `Your ${reportType} report is being generated.`,
     });
+  };
+
+  const handleCreateReport = () => {
+    setShowReportCreator(true);
+  };
+
+  const handleCloseReportCreator = () => {
+    setShowReportCreator(false);
+  };
+
+  const handleGenerateReport = (reportConfig: any) => {
+    setShowReportCreator(false);
+    
+    // Simulate report generation completion
+    setTimeout(() => {
+      setReportViewerName(reportConfig.type === "billProfit" ? "Bill-wise Profit Report" : 
+                          reportConfig.type === "salesSummary" ? "Sales Summary Report" :
+                          "Generated Report");
+      setShowReportViewer(true);
+    }, 500);
+  };
+
+  const handleViewSampleReport = (reportName: string) => {
+    setReportViewerName(reportName);
+    setShowReportViewer(true);
+  };
+
+  const handleCloseReportViewer = () => {
+    setShowReportViewer(false);
   };
 
   // Sample data for charts
@@ -105,6 +152,18 @@ const ReportsDashboard = () => {
     { name: "Online", value: 45000 },
   ];
 
+  // Sample report types
+  const reportTypes = [
+    { name: "Bill-wise Profit", icon: <Receipt className="h-5 w-5 text-indigo-600" />, description: "Analyze profit margins per bill/invoice" },
+    { name: "Sales Summary", icon: <BarChart3 className="h-5 w-5 text-blue-600" />, description: "Overview of sales performance" },
+    { name: "Daybook", icon: <Calendar className="h-5 w-5 text-green-600" />, description: "Daily transaction record" },
+    { name: "Profit and Loss", icon: <TrendingUp className="h-5 w-5 text-amber-600" />, description: "Financial performance analysis" },
+    { name: "Party Statement", icon: <FileText className="h-5 w-5 text-orange-600" />, description: "Customer/vendor transaction history" },
+    { name: "Stock Summary", icon: <Package className="h-5 w-5 text-cyan-600" />, description: "Inventory levels overview" },
+    { name: "GST Reports", icon: <FileSpreadsheet className="h-5 w-5 text-violet-600" />, description: "Tax compliance reports" },
+    { name: "Balance Sheet", icon: <LineChart className="h-5 w-5 text-rose-600" />, description: "Assets and liabilities summary" },
+  ];
+
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -121,6 +180,8 @@ const ReportsDashboard = () => {
           {/* Report Controls */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-start md:items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-3">
+              <GlobalSearch />
+              
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Select Period" />
@@ -191,9 +252,9 @@ const ReportsDashboard = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              <Button className="gap-2 bg-unnati-primary">
-                <BarChart3 className="h-4 w-4" />
-                Generate Report
+              <Button className="gap-2 bg-unnati-primary" onClick={handleCreateReport}>
+                <FilePlus2 className="h-4 w-4" />
+                Create Report
               </Button>
             </div>
           </div>
@@ -264,12 +325,37 @@ const ReportsDashboard = () => {
             </Card>
           </div>
           
+          {/* Quick Access Report Types */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-4">Quick Access Reports</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {reportTypes.slice(0, 4).map((report) => (
+                <Card 
+                  key={report.name} 
+                  className="cursor-pointer hover:shadow-md transition-shadow duration-200"
+                  onClick={() => handleViewSampleReport(report.name)}
+                >
+                  <CardContent className="p-4 flex items-start space-x-4">
+                    <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                      {report.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{report.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{report.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+          
           {/* Report Tabs */}
-          <Tabs defaultValue="financial" className="mb-6">
-            <TabsList className="grid grid-cols-4 mb-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+            <TabsList className="grid grid-cols-5 mb-6">
               <TabsTrigger value="financial">Financial</TabsTrigger>
               <TabsTrigger value="sales">Sales</TabsTrigger>
               <TabsTrigger value="inventory">Inventory</TabsTrigger>
+              <TabsTrigger value="tax">Tax & GST</TabsTrigger>
               <TabsTrigger value="custom">Custom Reports</TabsTrigger>
             </TabsList>
             
@@ -322,6 +408,16 @@ const ReportsDashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
+                
+                {/* Financial Reports List */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Recent Financial Reports</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ReportsList />
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
             
@@ -359,25 +455,264 @@ const ReportsDashboard = () => {
             </TabsContent>
             
             <TabsContent value="inventory">
-              <Card>
-                <CardContent className="py-10">
-                  <div className="text-center">
-                    <p className="text-gray-500 dark:text-gray-400">Inventory reports content would go here</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">Total Inventory Value</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">₹18.45L</h3>
+                        <div className="flex items-center gap-1 text-green-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">3.2%</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">Low Stock Items</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">24</h3>
+                        <div className="flex items-center gap-1 text-amber-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">+8</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">Stock Turnover Rate</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">3.8x</h3>
+                        <div className="flex items-center gap-1 text-green-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">0.2x</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Inventory Reports</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {[
+                        { name: "Stock Summary", icon: <Package className="h-5 w-5 text-blue-500" /> },
+                        { name: "Price & Stock Summary", icon: <CreditCard className="h-5 w-5 text-green-500" /> },
+                        { name: "Inventory Valuation", icon: <DollarSign className="h-5 w-5 text-amber-500" /> },
+                        { name: "Slow Moving Items", icon: <TrendingUp className="h-5 w-5 text-red-500" /> },
+                        { name: "Stock Transfer Report", icon: <FileText className="h-5 w-5 text-purple-500" /> },
+                        { name: "Batch Wise Stock", icon: <ListFilter className="h-5 w-5 text-indigo-500" /> },
+                      ].map(report => (
+                        <Card 
+                          key={report.name} 
+                          className="cursor-pointer hover:shadow-md transition-shadow duration-200 border"
+                          onClick={() => handleViewSampleReport(report.name)}
+                        >
+                          <CardContent className="p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-gray-100">
+                                {report.icon}
+                              </div>
+                              <h3 className="font-medium">{report.name}</h3>
+                            </div>
+                            <FileDown className="h-4 w-4 text-gray-400" />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="tax">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">GST Payable</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">₹2.84L</h3>
+                        <div className="flex items-center gap-1 text-amber-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">12%</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">GST Receivable</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">₹1.45L</h3>
+                        <div className="flex items-center gap-1 text-green-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">5%</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">Net GST</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-baseline justify-between">
+                        <h3 className="text-3xl font-bold">₹1.39L</h3>
+                        <div className="flex items-center gap-1 text-red-600">
+                          <ArrowUpRight className="h-4 w-4" />
+                          <span className="font-medium">18%</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Tax Reports</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {[
+                        { name: "GSTR-1 Summary", icon: <FileText className="h-5 w-5 text-blue-500" /> },
+                        { name: "GSTR-2 Summary", icon: <FileText className="h-5 w-5 text-green-500" /> },
+                        { name: "GSTR-3B Summary", icon: <FileText className="h-5 w-5 text-amber-500" /> },
+                        { name: "HSN Summary", icon: <FileSpreadsheet className="h-5 w-5 text-red-500" /> },
+                        { name: "E-way Bill Register", icon: <FileText className="h-5 w-5 text-purple-500" /> },
+                        { name: "Tax Liability Report", icon: <CreditCard className="h-5 w-5 text-indigo-500" /> },
+                      ].map(report => (
+                        <Card 
+                          key={report.name} 
+                          className="cursor-pointer hover:shadow-md transition-shadow duration-200 border"
+                          onClick={() => handleViewSampleReport(report.name)}
+                        >
+                          <CardContent className="p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-gray-100">
+                                {report.icon}
+                              </div>
+                              <h3 className="font-medium">{report.name}</h3>
+                            </div>
+                            <FileDown className="h-4 w-4 text-gray-400" />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
             
             <TabsContent value="custom">
-              <Card>
-                <CardContent className="py-10">
-                  <div className="text-center">
-                    <p className="text-gray-500 dark:text-gray-400">Custom reports builder would go here</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Custom Reports</CardTitle>
+                    <Button className="gap-2 bg-unnati-primary" onClick={handleCreateReport}>
+                      <Plus className="h-4 w-4" />
+                      Create New Report
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="relative mb-4">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                        <Input placeholder="Search saved reports..." className="pl-8" />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {[
+                          { name: "Monthly Customer Retention", date: "Created on 10 Apr, 2025", type: "Custom" },
+                          { name: "Product Line Performance", date: "Created on 05 Apr, 2025", type: "Custom" },
+                          { name: "Vendor Performance Analysis", date: "Created on 01 Apr, 2025", type: "Custom" },
+                          { name: "Marketing Campaign ROI", date: "Created on 25 Mar, 2025", type: "Custom" },
+                        ].map(report => (
+                          <Card key={report.name} className="border hover:shadow-md cursor-pointer transition-shadow duration-200">
+                            <CardContent className="p-4 flex justify-between items-center">
+                              <div>
+                                <h3 className="font-medium">{report.name}</h3>
+                                <p className="text-sm text-gray-500">{report.date}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="sm">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm">
+                                      <Download className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                      <FileDown className="h-4 w-4 mr-2 text-green-600" />
+                                      Excel Format
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <FileDown className="h-4 w-4 mr-2 text-red-600" />
+                                      PDF Format
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
+          
+          {/* Report Creator Dialog */}
+          {showReportCreator && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                <BillingReportCreator 
+                  onClose={handleCloseReportCreator}
+                  onGenerate={handleGenerateReport}
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* Report Viewer Dialog */}
+          {showReportViewer && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+                <ReportViewer 
+                  reportName={reportViewerName}
+                  onClose={handleCloseReportViewer}
+                  onDownloadExcel={() => handleExportReport("Excel")}
+                  onDownloadPdf={() => handleExportReport("PDF")}
+                  onPrint={() => handleExportReport("Print")}
+                />
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

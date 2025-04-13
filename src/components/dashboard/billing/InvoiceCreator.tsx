@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Trash2, FileText, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +36,7 @@ interface InvoiceCreatorProps {
   isOpen: boolean;
   onClose: () => void;
   onInvoiceCreated: (invoice: any) => void;
+  documentType?: string;
 }
 
 // Mock product list for the demo
@@ -61,6 +62,15 @@ const CUSTOMERS = [
   { id: "C005", name: "Quality Electronics", address: "Allahabad, UP" },
 ];
 
+// Mock vendor list for the demo
+const VENDORS = [
+  { id: "V001", name: "Havells India Ltd.", address: "New Delhi" },
+  { id: "V002", name: "Orient Electric", address: "Kolkata" },
+  { id: "V003", name: "Polycab Wires", address: "Mumbai" },
+  { id: "V004", name: "Anchor Electricals", address: "Pune" },
+  { id: "V005", name: "Bajaj Electricals", address: "Chennai" },
+];
+
 interface InvoiceItem {
   productId: string;
   description: string;
@@ -71,22 +81,51 @@ interface InvoiceItem {
 const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
   isOpen,
   onClose,
-  onInvoiceCreated
+  onInvoiceCreated,
+  documentType = "Invoice"
 }) => {
   const { toast } = useToast();
-  const [customer, setCustomer] = useState("");
-  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
+  const [entity, setEntity] = useState("");
+  const [documentDate, setDocumentDate] = useState(new Date().toISOString().split("T")[0]);
   const [dueDate, setDueDate] = useState("");
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<InvoiceItem[]>([
     { productId: "", description: "", quantity: 1, price: 0 }
   ]);
   const [taxRate, setTaxRate] = useState("18");
-  const [invoiceType, setInvoiceType] = useState("with-gst");
+  const [documentSubtype, setDocumentSubtype] = useState("with-gst");
   
+  // Determine if the document is a purchase-related document
+  const isPurchaseDocument = documentType.toLowerCase().includes("purchase") || 
+                             documentType.toLowerCase().includes("debit") ||
+                             documentType.toLowerCase().includes("payment out");
+
+  // Reset form when the document type changes
+  useEffect(() => {
+    setEntity("");
+    setItems([{ productId: "", description: "", quantity: 1, price: 0 }]);
+    setNotes("");
+
+    // Set relevant default notes based on document type
+    if (documentType === "Credit Note") {
+      setNotes("This credit note is issued against returned goods.");
+    } else if (documentType === "Debit Note") {
+      setNotes("This debit note is issued for goods returned to supplier.");
+    } else if (documentType === "Quotation") {
+      setNotes("This quotation is valid for 15 days from the date of issue.");
+    } else if (documentType === "Delivery Challan") {
+      setNotes("Goods supplied for the purpose mentioned above.");
+    }
+
+    // Set due date to 15 days from current date by default
+    const dateObj = new Date();
+    dateObj.setDate(dateObj.getDate() + 15);
+    setDueDate(dateObj.toISOString().split("T")[0]);
+  }, [documentType]);
+
   // Calculate subtotal
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const taxAmount = invoiceType === "with-gst" ? (subtotal * parseFloat(taxRate)) / 100 : 0;
+  const taxAmount = documentSubtype === "with-gst" ? (subtotal * parseFloat(taxRate)) / 100 : 0;
   const total = subtotal + taxAmount;
 
   const addItem = () => {
@@ -119,22 +158,40 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
     setItems(newItems);
   };
 
-  const handleCustomerChange = (customerId: string) => {
-    setCustomer(customerId);
-    // Set due date to 30 days from invoice date
-    const invoiceDateObj = new Date(invoiceDate);
-    invoiceDateObj.setDate(invoiceDateObj.getDate() + 30);
-    setDueDate(invoiceDateObj.toISOString().split("T")[0]);
+  const handleEntityChange = (entityId: string) => {
+    setEntity(entityId);
+    // Set due date to 30 days from document date
+    const documentDateObj = new Date(documentDate);
+    documentDateObj.setDate(documentDateObj.getDate() + 30);
+    setDueDate(documentDateObj.toISOString().split("T")[0]);
+  };
+
+  const getDocumentPrefix = () => {
+    switch (documentType) {
+      case "Invoice": return "INV";
+      case "Sales Return": return "SR";
+      case "Credit Note": return "CN";
+      case "Quotation": return "QT";
+      case "Delivery Challan": return "DC";
+      case "Proforma Invoice": return "PI";
+      case "Automated Bill": return "AB";
+      case "Counter Purchase": return "CP";
+      case "Payment Out": return "PO";
+      case "Purchase Return": return "PR";
+      case "Debit Note": return "DN";
+      case "Purchase Order": return "PO";
+      default: return "DOC";
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate form
-    if (!customer) {
+    if (!entity) {
       toast({
-        title: "Missing customer",
-        description: "Please select a customer for this invoice",
+        title: `Missing ${isPurchaseDocument ? 'vendor' : 'customer'}`,
+        description: `Please select a ${isPurchaseDocument ? 'vendor' : 'customer'} for this ${documentType.toLowerCase()}`,
         variant: "destructive",
       });
       return;
@@ -149,13 +206,18 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
       return;
     }
 
-    // Create invoice object
-    const selectedCustomer = CUSTOMERS.find(c => c.id === customer);
+    // Create document object
+    const entityDetails = isPurchaseDocument 
+      ? VENDORS.find(v => v.id === entity)
+      : CUSTOMERS.find(c => c.id === entity);
     
-    const invoice = {
-      id: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-      customer: selectedCustomer?.name,
-      date: invoiceDate,
+    const prefix = getDocumentPrefix();
+    const documentId = `${prefix}-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    
+    const document = {
+      id: documentId,
+      [isPurchaseDocument ? 'vendor' : 'customer']: entityDetails?.name,
+      date: documentDate,
       dueDate: dueDate,
       items: items.map(item => ({
         ...item,
@@ -163,33 +225,49 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
         total: item.price * item.quantity
       })),
       subtotal,
-      taxRate: invoiceType === "with-gst" ? parseFloat(taxRate) : 0,
+      taxRate: documentSubtype === "with-gst" ? parseFloat(taxRate) : 0,
       taxAmount,
       total,
       notes,
       status: "Pending",
-      invoiceType: invoiceType
+      documentType: documentType,
+      documentSubtype: documentSubtype
     };
 
     // Simulate saving
     setTimeout(() => {
       toast({
-        title: "Invoice Created",
-        description: `${invoiceType === "with-gst" ? "GST" : "Non-GST"} Invoice ${invoice.id} has been created successfully`,
+        title: `${documentType} Created`,
+        description: `${documentSubtype === "with-gst" ? "GST" : "Non-GST"} ${documentType} ${document.id} has been created successfully`,
       });
       
-      onInvoiceCreated(invoice);
+      onInvoiceCreated(document);
       onClose();
     }, 500);
+  };
+
+  // Get appropriate dialog title based on document type
+  const getDialogTitle = () => {
+    return `Create New ${documentType}`;
+  };
+
+  // Get appropriate entity label based on document type
+  const getEntityLabel = () => {
+    return isPurchaseDocument ? "Vendor" : "Customer";
+  };
+
+  // Get appropriate entities list based on document type
+  const getEntitiesList = () => {
+    return isPurchaseDocument ? VENDORS : CUSTOMERS;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Invoice</DialogTitle>
+          <DialogTitle>{getDialogTitle()}</DialogTitle>
           <DialogDescription>
-            Create a new invoice for your customer
+            Enter the details for the new {documentType.toLowerCase()}
           </DialogDescription>
         </DialogHeader>
         
@@ -197,18 +275,18 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
           <div className="space-y-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="customer">Customer</Label>
+                <Label htmlFor="entity">{getEntityLabel()}</Label>
                 <Select
-                  value={customer}
-                  onValueChange={handleCustomerChange}
+                  value={entity}
+                  onValueChange={handleEntityChange}
                 >
-                  <SelectTrigger id="customer">
-                    <SelectValue placeholder="Select customer" />
+                  <SelectTrigger id="entity">
+                    <SelectValue placeholder={`Select ${getEntityLabel().toLowerCase()}`} />
                   </SelectTrigger>
                   <SelectContent>
-                    {CUSTOMERS.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
+                    {getEntitiesList().map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -218,7 +296,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
               <div className="text-right">
                 <div className="flex items-center justify-end gap-2 mb-2">
                   <FileText className="h-5 w-5 text-unnati-primary" />
-                  <span className="font-bold text-lg text-unnati-primary">INVOICE</span>
+                  <span className="font-bold text-lg text-unnati-primary">{documentType.toUpperCase()}</span>
                 </div>
                 <div className="text-sm text-gray-500">
                   Shree Unnati Traders<br />
@@ -227,46 +305,50 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
               </div>
             </div>
             
-            <div className="border-b pb-4">
-              <Label className="mb-2 block">Invoice Type</Label>
-              <RadioGroup
-                value={invoiceType}
-                onValueChange={setInvoiceType}
-                className="flex space-x-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="with-gst" id="invoice-with-gst" />
-                  <Label htmlFor="invoice-with-gst" className="cursor-pointer">With GST</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="without-gst" id="invoice-without-gst" />
-                  <Label htmlFor="invoice-without-gst" className="cursor-pointer">Without GST</Label>
-                </div>
-              </RadioGroup>
-            </div>
+            {(documentType === "Invoice" || documentType === "Proforma Invoice" || documentType === "Quotation") && (
+              <div className="border-b pb-4">
+                <Label className="mb-2 block">Document Type</Label>
+                <RadioGroup
+                  value={documentSubtype}
+                  onValueChange={setDocumentSubtype}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="with-gst" id="with-gst" />
+                    <Label htmlFor="with-gst" className="cursor-pointer">With GST</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="without-gst" id="without-gst" />
+                    <Label htmlFor="without-gst" className="cursor-pointer">Without GST</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="invoice-date">Invoice Date</Label>
+                <Label htmlFor="document-date">Date</Label>
                 <Input
-                  id="invoice-date"
+                  id="document-date"
                   type="date"
-                  value={invoiceDate}
-                  onChange={(e) => setInvoiceDate(e.target.value)}
+                  value={documentDate}
+                  onChange={(e) => setDocumentDate(e.target.value)}
                 />
               </div>
               
-              <div>
-                <Label htmlFor="due-date">Due Date</Label>
-                <Input
-                  id="due-date"
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              </div>
+              {(documentType === "Invoice" || documentType === "Proforma Invoice" || documentType === "Purchase Order") && (
+                <div>
+                  <Label htmlFor="due-date">Due Date</Label>
+                  <Input
+                    id="due-date"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              )}
               
-              {invoiceType === "with-gst" && (
+              {documentSubtype === "with-gst" && (
                 <div>
                   <Label htmlFor="tax-rate">Tax Rate (%)</Label>
                   <Select
@@ -289,7 +371,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
             
             <div>
               <div className="flex justify-between items-center mb-2">
-                <Label>Invoice Items</Label>
+                <Label>Items</Label>
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -375,7 +457,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                   </TableBody>
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={3} rowSpan={invoiceType === "with-gst" ? 3 : 2} className="align-top">
+                      <TableCell colSpan={3} rowSpan={documentSubtype === "with-gst" ? 3 : 2} className="align-top">
                         <Label htmlFor="notes" className="mb-2 block">Notes</Label>
                         <Textarea
                           id="notes"
@@ -391,7 +473,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                       </TableCell>
                       <TableCell></TableCell>
                     </TableRow>
-                    {invoiceType === "with-gst" && (
+                    {documentSubtype === "with-gst" && (
                       <TableRow>
                         <TableCell className="text-right">
                           GST ({parseFloat(taxRate)}%)
@@ -421,7 +503,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
             </Button>
             <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
-              Create {invoiceType === "with-gst" ? "GST" : "Non-GST"} Invoice
+              Create {documentSubtype === "with-gst" ? "GST" : ""} {documentType}
             </Button>
           </DialogFooter>
         </form>

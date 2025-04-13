@@ -61,13 +61,13 @@ const SuppliersDashboard = () => {
     { name: "Jun", value: 42 },
   ];
 
-  // Sample recent orders data
+  // Sample recent orders data with status explicitly typed as allowed values
   const recentOrders = [
-    { id: "PO-2025-001", supplier: "Havells India Ltd.", date: "08 Apr, 2025", items: "Copper Wires", amount: "₹45,800", status: "Received" },
-    { id: "PO-2025-002", supplier: "Orient Electric", date: "07 Apr, 2025", items: "LED Panels", amount: "₹28,500", status: "In Transit" },
-    { id: "PO-2025-003", supplier: "Polycab Wires", date: "06 Apr, 2025", items: "FRLSH Cables", amount: "₹65,200", status: "Ordered" },
-    { id: "PO-2025-004", supplier: "Anchor Electricals", date: "05 Apr, 2025", items: "Switch Boards", amount: "₹18,400", status: "Received" },
-    { id: "PO-2025-005", supplier: "Bajaj Electricals", date: "04 Apr, 2025", items: "Ceiling Fans", amount: "₹35,200", status: "In Transit" },
+    { id: "PO-2025-001", supplier: "Havells India Ltd.", date: "08 Apr, 2025", items: "Copper Wires", amount: "₹45,800", status: "Received" as const },
+    { id: "PO-2025-002", supplier: "Orient Electric", date: "07 Apr, 2025", items: "LED Panels", amount: "₹28,500", status: "In Transit" as const },
+    { id: "PO-2025-003", supplier: "Polycab Wires", date: "06 Apr, 2025", items: "FRLSH Cables", amount: "₹65,200", status: "Ordered" as const },
+    { id: "PO-2025-004", supplier: "Anchor Electricals", date: "05 Apr, 2025", items: "Switch Boards", amount: "₹18,400", status: "Received" as const },
+    { id: "PO-2025-005", supplier: "Bajaj Electricals", date: "04 Apr, 2025", items: "Ceiling Fans", amount: "₹35,200", status: "In Transit" as const },
   ];
 
   return (

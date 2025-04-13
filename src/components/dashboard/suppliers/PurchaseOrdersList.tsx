@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
-interface PurchaseOrder {
+// This interface ensures status is strictly typed as one of these four values
+export interface PurchaseOrder {
   id: string;
   supplier: string;
   date: string;

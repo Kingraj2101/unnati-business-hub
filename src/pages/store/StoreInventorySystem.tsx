@@ -388,12 +388,11 @@ const StoreInventorySystem = () => {
                     </div>
                     <Progress 
                       value={category.percent} 
-                      className="h-2" 
-                      indicatorClassName={
+                      className={`h-2 ${
                         category.percent < 25 ? "bg-red-500" : 
                         category.percent < 50 ? "bg-amber-500" : 
                         "bg-green-500"
-                      }
+                      }`}
                     />
                   </div>
                 ))}

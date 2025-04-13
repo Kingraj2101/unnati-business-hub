@@ -37,6 +37,14 @@ import FactorySupplySystem from "./pages/factory/FactorySupplySystem";
 import StoreBillingSystem from "./pages/store/StoreBillingSystem";
 import StoreSupplySystem from "./pages/store/StoreSupplySystem";
 
+// New pages for retail dashboard sections
+import StoreInventorySystem from "./pages/store/StoreInventorySystem";
+import StoreCustomerManagement from "./pages/store/StoreCustomerManagement";
+import StoreOrderManagement from "./pages/store/StoreOrderManagement";
+import StorePaymentSystem from "./pages/store/StorePaymentSystem";
+import StoreReports from "./pages/store/StoreReports";
+import StoreSettings from "./pages/store/StoreSettings";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -68,6 +76,12 @@ const App = () => {
             <Route path="/store-dashboard" element={<StoreDashboard />} />
             <Route path="/store-dashboard/billing" element={<StoreBillingSystem />} />
             <Route path="/store-dashboard/supply" element={<StoreSupplySystem />} />
+            <Route path="/store-dashboard/inventory" element={<StoreInventorySystem />} />
+            <Route path="/store-dashboard/customers" element={<StoreCustomerManagement />} />
+            <Route path="/store-dashboard/orders" element={<StoreOrderManagement />} />
+            <Route path="/store-dashboard/payments" element={<StorePaymentSystem />} />
+            <Route path="/store-dashboard/reports" element={<StoreReports />} />
+            <Route path="/store-dashboard/settings" element={<StoreSettings />} />
             
             {/* Factory Routes */}
             <Route path="/factory-dashboard" element={<FactoryDashboard />} />

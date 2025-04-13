@@ -3,44 +3,26 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
-import ReportCard from "@/components/reports/ReportCard";
-import ReportViewer from "@/components/reports/ReportViewer";
-import FactoryPerformanceReport from "@/components/reports/FactoryPerformanceReport";
-import StorePerformanceReport from "@/components/reports/StorePerformanceReport";
-import VendorPerformanceReport from "@/components/reports/VendorPerformanceReport";
-import FileMinus from "@/components/reports/FileMinus";
-import { useToast } from "@/hooks/use-toast";
 import { 
-  Box, 
-  FileText, 
   BarChart3, 
-  TrendingUp, 
-  Package,
-  BarChart,
+  FileText, 
+  Download, 
+  FileSpreadsheet,
   Calendar,
-  Users,
-  DollarSign,
-  Truck,
-  Factory,
-  Store,
-  CircleDollarSign,
   Filter,
-  ShoppingBag
+  PieChart,
+  LineChart,
+  DollarSign,
+  TrendingUp,
+  ArrowUpRight,
+  Share2,
+  Printer,
+  Mail
 } from "lucide-react";
-import { 
-  Card, 
-  CardContent,
-  CardDescription,
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ChartCard from "@/components/dashboard/ChartCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -48,19 +30,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 const ReportsDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeReport, setActiveReport] = useState<string | null>(null);
-  const [reportViewerOpen, setReportViewerOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState("last6months");
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const { toast } = useToast();
-
-  // Filter states
-  const [dateRange, setDateRange] = useState("last30days");
-  const [reportCategory, setReportCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
@@ -71,438 +55,329 @@ const ReportsDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleViewReport = (reportName: string) => {
-    setActiveReport(reportName);
-    setReportViewerOpen(true);
-    // In a real application, you would fetch the report data here
+  const handleExportReport = (reportType: string) => {
     toast({
-      title: "Opening Report",
-      description: `Loading ${reportName} report data...`,
+      title: "Report Export Started",
+      description: `Your ${reportType} report is being generated.`,
     });
   };
 
-  const handleDownloadExcel = (reportName: string) => {
-    toast({
-      title: "Downloading Excel",
-      description: `${reportName} is being downloaded as Excel file.`,
-    });
-  };
-
-  const handleDownloadPdf = (reportName: string) => {
-    toast({
-      title: "Downloading PDF",
-      description: `${reportName} is being downloaded as PDF file.`,
-    });
-  };
-
-  const handlePrintReport = (reportName: string) => {
-    toast({
-      title: "Printing Report",
-      description: `${reportName} is being sent to printer.`,
-    });
-  };
-
-  const handleCloseReportViewer = () => {
-    setReportViewerOpen(false);
-    setActiveReport(null);
-  };
-
-  // Filter reports based on search query and category
-  const filterReports = (reports: any[]) => {
-    return reports.filter(report => {
-      const matchesSearch = report.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = reportCategory === "all" || report.category === reportCategory;
-      return matchesSearch && matchesCategory;
-    });
-  };
-
-  // Define reports by category
-  const salesReports = [
-    {
-      title: "Sales Performance",
-      description: "Daily, weekly, and monthly sales performance metrics",
-      icon: <BarChart3 size={18} className="text-blue-600" />,
-      category: "sales"
-    },
-    {
-      title: "Product Sales Analysis",
-      description: "Sales breakdown by product, category, and trends",
-      icon: <Box size={18} className="text-green-600" />,
-      category: "sales"
-    },
-    {
-      title: "Customer Purchase Patterns",
-      description: "Analysis of customer buying habits and preferences",
-      icon: <Package size={18} className="text-purple-600" />,
-      category: "sales"
-    },
-    {
-      title: "Invoice Summary",
-      description: "Summary of all invoices generated in the selected period",
-      icon: <FileMinus size={18} className="text-red-600" />,
-      category: "sales"
-    }
+  // Sample data for charts
+  const revenueData = [
+    { name: "Jan", value: 425000 },
+    { name: "Feb", value: 465000 },
+    { name: "Mar", value: 480000 },
+    { name: "Apr", value: 435600 },
+    { name: "May", value: 450000 },
+    { name: "Jun", value: 480000 },
   ];
 
-  const inventoryReports = [
-    {
-      title: "Inventory Valuation",
-      description: "Current value of inventory by location and category",
-      icon: <DollarSign size={18} className="text-green-600" />,
-      category: "inventory"
-    },
-    {
-      title: "Stock Movement Analysis",
-      description: "Trends in inventory movement and turnover rates",
-      icon: <TrendingUp size={18} className="text-blue-600" />,
-      category: "inventory"
-    },
-    {
-      title: "Low Stock Alert Report",
-      description: "Items that are below minimum stock threshold",
-      icon: <ShoppingBag size={18} className="text-amber-600" />,
-      category: "inventory"
-    },
-    {
-      title: "Inventory Aging Report",
-      description: "Analysis of slow-moving and stagnant inventory",
-      icon: <Calendar size={18} className="text-purple-600" />,
-      category: "inventory"
-    }
+  const expenseData = [
+    { name: "Jan", value: 380000 },
+    { name: "Feb", value: 390000 },
+    { name: "Mar", value: 410000 },
+    { name: "Apr", value: 385000 },
+    { name: "May", value: 395000 },
+    { name: "Jun", value: 425000 },
   ];
 
-  const financeReports = [
-    {
-      title: "Profit & Loss Statement",
-      description: "Comprehensive P&L statement for the selected period",
-      icon: <CircleDollarSign size={18} className="text-green-600" />,
-      category: "finance"
-    },
-    {
-      title: "Expense Analysis",
-      description: "Breakdown of expenses by category and comparison",
-      icon: <TrendingUp size={18} className="text-red-600" />,
-      category: "finance"
-    },
-    {
-      title: "Cash Flow Report",
-      description: "Cash inflow and outflow analysis with projections",
-      icon: <DollarSign size={18} className="text-blue-600" />,
-      category: "finance"
-    },
-    {
-      title: "Accounts Receivable Aging",
-      description: "Outstanding receivables categorized by age",
-      icon: <FileText size={18} className="text-amber-600" />,
-      category: "finance"
-    }
+  const salesByCategoryData = [
+    { name: "Wires & Cables", value: 180000 },
+    { name: "Lighting", value: 120000 },
+    { name: "Switches", value: 85000 },
+    { name: "Fans", value: 65000 },
+    { name: "MCBs & DBs", value: 45000 },
+    { name: "Others", value: 25000 },
   ];
 
-  const operationsReports = [
-    {
-      title: "Factory Performance",
-      description: "Production metrics and efficiency analysis",
-      icon: <Factory size={18} className="text-orange-600" />,
-      category: "operations"
-    },
-    {
-      title: "Store Performance",
-      description: "Retail store metrics and performance analysis",
-      icon: <Store size={18} className="text-blue-600" />,
-      category: "operations"
-    },
-    {
-      title: "Vendor Performance",
-      description: "Supplier reliability, quality, and delivery metrics",
-      icon: <Truck size={18} className="text-purple-600" />,
-      category: "operations"
-    },
-    {
-      title: "Staff Productivity",
-      description: "Employee performance and productivity metrics",
-      icon: <Users size={18} className="text-green-600" />,
-      category: "operations"
-    }
+  const topSellingProductsData = [
+    { name: "Havells Wire", value: 85000 },
+    { name: "Orient Fan", value: 65000 },
+    { name: "LED Panel", value: 52000 },
+    { name: "MCB Switch", value: 48000 },
+    { name: "Socket", value: 32000 },
   ];
 
-  // Filter reports based on current filter settings
-  const filteredSalesReports = filterReports(salesReports);
-  const filteredInventoryReports = filterReports(inventoryReports);
-  const filteredFinanceReports = filterReports(financeReports);
-  const filteredOperationsReports = filterReports(operationsReports);
+  const salesByChannelData = [
+    { name: "Direct", value: 280000 },
+    { name: "Retail Store", value: 175000 },
+    { name: "Distributor", value: 120000 },
+    { name: "Online", value: 45000 },
+  ];
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader toggleSidebar={toggleSidebar} />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-unnati-dark">Reports Dashboard</h1>
-              <p className="text-gray-500">Generate and analyze business reports</p>
-            </div>
-            
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Reports Dashboard</h1>
+            <p className="text-gray-500 dark:text-gray-400">Analyze business performance with detailed reports</p>
+          </div>
+          
+          {/* Report Controls */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6 items-start md:items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-[180px]">
+              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Select Period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="yesterday">Yesterday</SelectItem>
-                  <SelectItem value="last7days">Last 7 Days</SelectItem>
-                  <SelectItem value="last30days">Last 30 Days</SelectItem>
-                  <SelectItem value="thisMonth">This Month</SelectItem>
-                  <SelectItem value="lastMonth">Last Month</SelectItem>
-                  <SelectItem value="thisYear">This Year</SelectItem>
+                  <SelectItem value="thismonth">This Month</SelectItem>
+                  <SelectItem value="lastmonth">Last Month</SelectItem>
+                  <SelectItem value="last3months">Last 3 Months</SelectItem>
+                  <SelectItem value="last6months">Last 6 Months</SelectItem>
+                  <SelectItem value="thisyear">This Year</SelectItem>
                   <SelectItem value="custom">Custom Range</SelectItem>
                 </SelectContent>
               </Select>
               
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input 
-                  placeholder="Search reports..." 
-                  className="pl-9 w-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              <Button variant="outline" size="icon" className="h-10 w-10">
+                <Calendar className="h-4 w-4" />
+              </Button>
+              
+              <Button variant="outline" size="icon" className="h-10 w-10">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="flex gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleExportReport("PDF")}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExportReport("Excel")}>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExportReport("CSV")}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    CSV
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Share Report</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Email
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <Button className="gap-2 bg-unnati-primary">
+                <BarChart3 className="h-4 w-4" />
+                Generate Report
+              </Button>
             </div>
           </div>
-
-          {/* Report Viewer - Shows when a report is selected */}
-          {reportViewerOpen && activeReport && (
-            <Card className="mb-6">
-              <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <CardTitle>{activeReport}</CardTitle>
-                <Button variant="outline" size="sm" onClick={handleCloseReportViewer}>
-                  Close
-                </Button>
+          
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-500" />
+                    Revenue
+                  </div>
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 6 Months</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <ReportViewer 
-                  reportName={activeReport} 
-                  onClose={handleCloseReportViewer}
-                  onDownloadExcel={() => handleDownloadExcel(activeReport)}
-                  onDownloadPdf={() => handleDownloadPdf(activeReport)}
-                  onPrint={() => handlePrintReport(activeReport)}
-                />
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-3xl font-bold text-gray-800 dark:text-white">₹27.35L</h3>
+                  <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                    <ArrowUpRight className="h-4 w-4" />
+                    <span className="font-medium">8.2%</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )}
-
-          {/* Report Categories */}
-          <Tabs defaultValue="all" onValueChange={setReportCategory} className="mb-6">
-            <TabsList className="w-full sm:w-auto grid grid-cols-5 mb-4">
-              <TabsTrigger value="all">All Reports</TabsTrigger>
+            
+            <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-red-500" />
+                    Expenses
+                  </div>
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 6 Months</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-3xl font-bold text-gray-800 dark:text-white">₹23.85L</h3>
+                  <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                    <ArrowUpRight className="h-4 w-4" />
+                    <span className="font-medium">5.4%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-500" />
+                    Net Profit
+                  </div>
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Last 6 Months</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-3xl font-bold text-gray-800 dark:text-white">₹3.5L</h3>
+                  <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                    <ArrowUpRight className="h-4 w-4" />
+                    <span className="font-medium">12.8%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Report Tabs */}
+          <Tabs defaultValue="financial" className="mb-6">
+            <TabsList className="grid grid-cols-4 mb-6">
+              <TabsTrigger value="financial">Financial</TabsTrigger>
               <TabsTrigger value="sales">Sales</TabsTrigger>
               <TabsTrigger value="inventory">Inventory</TabsTrigger>
-              <TabsTrigger value="finance">Finance</TabsTrigger>
-              <TabsTrigger value="operations">Operations</TabsTrigger>
+              <TabsTrigger value="custom">Custom Reports</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="all" className="space-y-6">
-              {/* Sales Reports Section */}
-              {filteredSalesReports.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Sales Reports</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredSalesReports.map((report, index) => (
-                      <ReportCard
-                        key={`sales-${index}`}
-                        title={report.title}
-                        icon={report.icon}
-                        description={report.description}
-                        onView={() => handleViewReport(report.title)}
-                        onDownloadExcel={() => handleDownloadExcel(report.title)}
-                        onDownloadPdf={() => handleDownloadPdf(report.title)}
-                      />
-                    ))}
-                  </div>
+            
+            <TabsContent value="financial">
+              <div className="space-y-6">
+                <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <CardHeader>
+                    <CardTitle>Revenue vs Expenses</CardTitle>
+                    <CardDescription>Monthly comparison for the last 6 months</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-80">
+                      {/* This would be a multi-line chart component */}
+                      <div className="flex h-full items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-md">
+                        <p>Revenue vs Expenses Chart</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <ChartCard title="Revenue Trend" type="line" data={revenueData} />
+                  <ChartCard title="Expense Trend" type="line" data={expenseData} />
                 </div>
-              )}
-
-              {/* Inventory Reports Section */}
-              {filteredInventoryReports.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Inventory Reports</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredInventoryReports.map((report, index) => (
-                      <ReportCard
-                        key={`inventory-${index}`}
-                        title={report.title}
-                        icon={report.icon}
-                        description={report.description}
-                        onView={() => handleViewReport(report.title)}
-                        onDownloadExcel={() => handleDownloadExcel(report.title)}
-                        onDownloadPdf={() => handleDownloadPdf(report.title)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Finance Reports Section */}
-              {filteredFinanceReports.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Finance Reports</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredFinanceReports.map((report, index) => (
-                      <ReportCard
-                        key={`finance-${index}`}
-                        title={report.title}
-                        icon={report.icon}
-                        description={report.description}
-                        onView={() => handleViewReport(report.title)}
-                        onDownloadExcel={() => handleDownloadExcel(report.title)}
-                        onDownloadPdf={() => handleDownloadPdf(report.title)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Operations Reports Section */}
-              {filteredOperationsReports.length > 0 && (
-                <div>
-                  <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Operations Reports</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredOperationsReports.map((report, index) => (
-                      <ReportCard
-                        key={`operations-${index}`}
-                        title={report.title}
-                        icon={report.icon}
-                        description={report.description}
-                        onView={() => handleViewReport(report.title)}
-                        onDownloadExcel={() => handleDownloadExcel(report.title)}
-                        onDownloadPdf={() => handleDownloadPdf(report.title)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* No reports found */}
-              {filteredSalesReports.length === 0 && 
-               filteredInventoryReports.length === 0 && 
-               filteredFinanceReports.length === 0 && 
-               filteredOperationsReports.length === 0 && (
-                <div className="text-center py-12">
-                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No reports found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters to find what you're looking for.</p>
-                </div>
-              )}
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Financial Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Gross Margin</p>
+                          <p className="text-xl font-semibold mt-1">32.5%</p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Operating Margin</p>
+                          <p className="text-xl font-semibold mt-1">18.2%</p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Net Profit Margin</p>
+                          <p className="text-xl font-semibold mt-1">12.8%</p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">ROI</p>
+                          <p className="text-xl font-semibold mt-1">24.5%</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
-
-            <TabsContent value="sales" className="space-y-6">
-              {filteredSalesReports.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredSalesReports.map((report, index) => (
-                    <ReportCard
-                      key={`sales-tab-${index}`}
-                      title={report.title}
-                      icon={report.icon}
-                      description={report.description}
-                      onView={() => handleViewReport(report.title)}
-                      onDownloadExcel={() => handleDownloadExcel(report.title)}
-                      onDownloadPdf={() => handleDownloadPdf(report.title)}
-                    />
-                  ))}
+            
+            <TabsContent value="sales">
+              <div className="space-y-6">
+                <Card className="shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <CardHeader>
+                    <CardTitle>Sales Performance</CardTitle>
+                    <CardDescription>Monthly sales data for the last 6 months</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-80">
+                      {/* This would be a bar chart component */}
+                      <div className="flex h-full items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-md">
+                        <p>Monthly Sales Chart</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <ChartCard title="Sales by Category" type="pie" data={salesByCategoryData} />
+                  <ChartCard title="Sales Channels" type="pie" data={salesByChannelData} />
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No sales reports found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
-                </div>
-              )}
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top Selling Products</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartCard title="Top 5 Products by Revenue" type="bar" data={topSellingProductsData} />
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
-
-            <TabsContent value="inventory" className="space-y-6">
-              {filteredInventoryReports.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredInventoryReports.map((report, index) => (
-                    <ReportCard
-                      key={`inventory-tab-${index}`}
-                      title={report.title}
-                      icon={report.icon}
-                      description={report.description}
-                      onView={() => handleViewReport(report.title)}
-                      onDownloadExcel={() => handleDownloadExcel(report.title)}
-                      onDownloadPdf={() => handleDownloadPdf(report.title)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Package className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No inventory reports found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
-                </div>
-              )}
+            
+            <TabsContent value="inventory">
+              <Card>
+                <CardContent className="py-10">
+                  <div className="text-center">
+                    <p className="text-gray-500 dark:text-gray-400">Inventory reports content would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
-
-            <TabsContent value="finance" className="space-y-6">
-              {filteredFinanceReports.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredFinanceReports.map((report, index) => (
-                    <ReportCard
-                      key={`finance-tab-${index}`}
-                      title={report.title}
-                      icon={report.icon}
-                      description={report.description}
-                      onView={() => handleViewReport(report.title)}
-                      onDownloadExcel={() => handleDownloadExcel(report.title)}
-                      onDownloadPdf={() => handleDownloadPdf(report.title)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <DollarSign className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No finance reports found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="operations" className="space-y-6">
-              {filteredOperationsReports.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredOperationsReports.map((report, index) => (
-                    <ReportCard
-                      key={`operations-tab-${index}`}
-                      title={report.title}
-                      icon={report.icon}
-                      description={report.description}
-                      onView={() => handleViewReport(report.title)}
-                      onDownloadExcel={() => handleDownloadExcel(report.title)}
-                      onDownloadPdf={() => handleDownloadPdf(report.title)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Factory className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No operations reports found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
-                </div>
-              )}
+            
+            <TabsContent value="custom">
+              <Card>
+                <CardContent className="py-10">
+                  <div className="text-center">
+                    <p className="text-gray-500 dark:text-gray-400">Custom reports builder would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
-
-          {/* Performance Overview */}
-          <h2 className="text-lg font-semibold mb-3 text-unnati-dark">Performance Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <FactoryPerformanceReport />
-            <StorePerformanceReport />
-            <VendorPerformanceReport />
-          </div>
         </main>
       </div>
     </div>

@@ -5,6 +5,8 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
 import StatCard from "@/components/dashboard/StatCard";
 import ChartCard from "@/components/dashboard/ChartCard";
+import PurchaseOrdersList from "@/components/dashboard/suppliers/PurchaseOrdersList";
+import SuppliersList from "@/components/dashboard/suppliers/SuppliersList";
 import { 
   Truck, 
   PackageCheck, 
@@ -16,8 +18,7 @@ import {
   ShoppingCart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SuppliersDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -70,7 +71,7 @@ const SuppliersDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -78,8 +79,8 @@ const SuppliersDashboard = () => {
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-unnati-dark">Suppliers Dashboard</h1>
-            <p className="text-gray-500">Manage supplier relationships and orders</p>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Suppliers Dashboard</h1>
+            <p className="text-gray-500 dark:text-gray-400">Manage supplier relationships and orders</p>
           </div>
           
           {/* Stats */}
@@ -87,25 +88,29 @@ const SuppliersDashboard = () => {
             <StatCard
               title="Active Suppliers"
               value="38"
-              icon={<Truck size={20} />}
+              icon={<Truck size={20} className="text-blue-500" />}
               change={{ value: "3", positive: true }}
+              className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
               title="Open Orders"
               value="12"
-              icon={<PackageCheck size={20} />}
+              icon={<PackageCheck size={20} className="text-amber-500" />}
+              className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
               title="This Month Spending"
               value="₹2,85,400"
-              icon={<CircleDollarSign size={20} />}
+              icon={<CircleDollarSign size={20} className="text-green-500" />}
               change={{ value: "8.5%", positive: false }}
+              className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
             <StatCard
               title="Delivery Success"
               value="95.2%"
-              icon={<Calendar size={20} />}
+              icon={<Calendar size={20} className="text-purple-500" />}
               change={{ value: "2.3%", positive: true }}
+              className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
           </div>
           
@@ -120,7 +125,7 @@ const SuppliersDashboard = () => {
             
             <Button 
               variant="outline" 
-              className="bg-white h-auto py-4 flex flex-col items-center justify-center gap-2"
+              className="bg-white dark:bg-gray-800 h-auto py-4 flex flex-col items-center justify-center gap-2"
             >
               <UserPlus size={20} />
               <span>Add Supplier</span>
@@ -128,7 +133,7 @@ const SuppliersDashboard = () => {
             
             <Button 
               variant="outline" 
-              className="bg-white h-auto py-4 flex flex-col items-center justify-center gap-2"
+              className="bg-white dark:bg-gray-800 h-auto py-4 flex flex-col items-center justify-center gap-2"
             >
               <FileSpreadsheet size={20} />
               <span>Supplier Report</span>
@@ -136,7 +141,7 @@ const SuppliersDashboard = () => {
             
             <Button 
               variant="outline" 
-              className="bg-white h-auto py-4 flex flex-col items-center justify-center gap-2"
+              className="bg-white dark:bg-gray-800 h-auto py-4 flex flex-col items-center justify-center gap-2"
             >
               <FileCheck size={20} />
               <span>Order Status</span>
@@ -149,91 +154,21 @@ const SuppliersDashboard = () => {
             <ChartCard title="Purchase Orders Trend" type="line" data={ordersTrendData} />
           </div>
           
-          {/* Recent Orders */}
-          <div className="mb-6">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-center">
-                  <CardTitle>Recent Purchase Orders</CardTitle>
-                  <Button variant="outline" size="sm">View All Orders</Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Supplier</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Items</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell>{order.supplier}</TableCell>
-                        <TableCell>{order.date}</TableCell>
-                        <TableCell>{order.items}</TableCell>
-                        <TableCell>{order.amount}</TableCell>
-                        <TableCell>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            order.status === 'Received' 
-                              ? 'bg-green-100 text-green-800'
-                              : order.status === 'In Transit'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {order.status}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Top Suppliers */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-center">
-                <CardTitle>Top Suppliers</CardTitle>
-                <Button variant="outline" size="sm">Manage Suppliers</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Supplier Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Items</TableHead>
-                    <TableHead>Orders</TableHead>
-                    <TableHead>Total Spending</TableHead>
-                    <TableHead>Rating</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topSuppliers.map((supplier) => (
-                    <TableRow key={supplier.id}>
-                      <TableCell className="font-medium">{supplier.id}</TableCell>
-                      <TableCell>{supplier.name}</TableCell>
-                      <TableCell>{supplier.type}</TableCell>
-                      <TableCell>{supplier.items}</TableCell>
-                      <TableCell>{supplier.orders}</TableCell>
-                      <TableCell>{supplier.spending}</TableCell>
-                      <TableCell className="font-medium text-green-600">{supplier.rating}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          {/* Tabs for Orders and Suppliers */}
+          <Tabs defaultValue="orders" className="mb-6">
+            <TabsList className="grid grid-cols-2 mb-6">
+              <TabsTrigger value="orders">Purchase Orders</TabsTrigger>
+              <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="orders">
+              <PurchaseOrdersList orders={recentOrders} />
+            </TabsContent>
+            
+            <TabsContent value="suppliers">
+              <SuppliersList suppliers={topSuppliers} />
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
     </div>

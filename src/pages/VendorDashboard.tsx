@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
@@ -21,7 +20,8 @@ import {
   ArrowDown,
   Clock,
   BarChart3,
-  BoxesIcon
+  BoxesIcon,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -29,9 +29,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const userType = localStorage.getItem("userType");
   const { toast } = useToast();
@@ -50,6 +52,14 @@ const VendorDashboard = () => {
     toast({
       title: `${action} Started`,
       description: `You've initiated the ${action.toLowerCase()} process.`,
+    });
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Search Initiated",
+      description: `Searching for "${searchQuery}"`,
     });
   };
 
@@ -86,9 +96,23 @@ const VendorDashboard = () => {
             <p className="text-gray-500 dark:text-gray-400">Manage orders, deliveries, and payment status</p>
           </div>
           
-          {/* Search and Quick Actions */}
+          {/* Enhanced Search and Quick Actions */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
-            <SearchBar placeholder="Search vendor dashboard..." dashboardType="vendor" />
+            <div className="w-full md:w-auto flex-1">
+              <form onSubmit={handleSearch} className="flex w-full max-w-lg items-center space-x-2">
+                <Input
+                  type="text"
+                  placeholder="Search orders, products, or invoices..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1"
+                />
+                <Button type="submit" className="gap-2">
+                  <Search className="h-4 w-4" />
+                  Search
+                </Button>
+              </form>
+            </div>
             
             <div className="flex gap-2">
               <Button 

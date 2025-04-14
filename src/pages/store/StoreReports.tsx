@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import SearchBar from "@/components/dashboard/SearchBar";
 import ChartCard from "@/components/dashboard/ChartCard";
+import { Progress } from "@/components/ui/progress";
 
 const StoreReports = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

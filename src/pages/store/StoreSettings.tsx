@@ -5,24 +5,26 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { 
   Settings, 
-  Save, 
-  Store, 
   User, 
+  Store, 
+  CreditCard, 
   Bell, 
   Shield, 
-  CreditCard, 
-  Printer, 
-  Truck, 
-  Database,
-  Check
+  Printer,
+  Smartphone,
+  Workflow,
+  LayoutGrid,
+  Save,
+  ArrowRight,
+  Check,
+  QrCode,
+  Terminal,
+  Warehouse
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { 
   Select, 
   SelectContent, 
@@ -30,12 +32,42 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const StoreSettings = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const { toast } = useToast();
+
+  // Form states
+  const [storeName, setStoreName] = useState("Unnati Electronics Store");
+  const [storeAddress, setStoreAddress] = useState("123 Main Street, City Center, Delhi");
+  const [storePhone, setStorePhone] = useState("+91 98765 43210");
+  const [storeEmail, setStoreEmail] = useState("store@unnatitraderselectricals.com");
+  const [storeGST, setStoreGST] = useState("29AABCU9603R1ZX");
+  const [sendReceipts, setSendReceipts] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(true);
+  const [stockAlerts, setStockAlerts] = useState(true);
+  const [enableBarcodeScanner, setEnableBarcodeScanner] = useState(true);
+  const [taxRate, setTaxRate] = useState("18");
+  const [currencyFormat, setCurrencyFormat] = useState("inr");
+  const [printerType, setPrinterType] = useState("thermal");
+  const [receiptTemplate, setReceiptTemplate] = useState("standard");
+  const [warehouseSync, setWarehouseSync] = useState(true);
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
@@ -46,10 +78,17 @@ const StoreSettings = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleSave = (section: string) => {
+  const handleSaveSettings = (section: string) => {
     toast({
       title: "Settings Saved",
       description: `${section} settings have been updated successfully.`,
+    });
+  };
+
+  const handleResetSettings = (section: string) => {
+    toast({
+      title: "Settings Reset",
+      description: `${section} settings have been reset to defaults.`,
     });
   };
 
@@ -70,360 +109,163 @@ const StoreSettings = () => {
           </div>
           
           <Tabs defaultValue="general" className="mb-6">
-            <TabsList className="grid grid-cols-5 mb-6">
-              <TabsTrigger value="general">
-                <Store className="h-4 w-4 mr-2" />
-                General
+            <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
+              <TabsTrigger value="general" className="flex items-center gap-2">
+                <Store className="h-4 w-4" />
+                <span className="hidden md:inline">General</span>
               </TabsTrigger>
-              <TabsTrigger value="users">
-                <User className="h-4 w-4 mr-2" />
-                User Access
+              <TabsTrigger value="billing" className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                <span className="hidden md:inline">Billing</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
+              <TabsTrigger value="notifications" className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                <span className="hidden md:inline">Notifications</span>
               </TabsTrigger>
-              <TabsTrigger value="billing">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Billing
+              <TabsTrigger value="hardware" className="flex items-center gap-2">
+                <Terminal className="h-4 w-4" />
+                <span className="hidden md:inline">Hardware</span>
               </TabsTrigger>
-              <TabsTrigger value="integrations">
-                <Database className="h-4 w-4 mr-2" />
-                Integrations
+              <TabsTrigger value="advanced" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                <span className="hidden md:inline">Advanced</span>
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="general">
               <Card>
                 <CardHeader>
-                  <CardTitle>General Settings</CardTitle>
-                  <CardDescription>Manage your store information and preferences</CardDescription>
+                  <CardTitle>Store Information</CardTitle>
+                  <CardDescription>Manage your store's basic information</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Store Information</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="store-name">Store Name</Label>
-                        <Input id="store-name" defaultValue="Unnati Traders - Mumbai Branch" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="store-id">Store ID</Label>
-                        <Input id="store-id" defaultValue="ST-MUM-001" readOnly className="bg-slate-100" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="address">Address</Label>
-                        <Input id="address" defaultValue="123 Commerce Street, Andheri East" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" defaultValue="Mumbai" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="pincode">PIN Code</Label>
-                        <Input id="pincode" defaultValue="400069" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Contact Number</Label>
-                        <Input id="phone" defaultValue="+91 9876543210" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" defaultValue="mumbai@unnatitraders.com" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="manager">Store Manager</Label>
-                        <Input id="manager" defaultValue="Rajesh Sharma" />
-                      </div>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="store-name">Store Name</Label>
+                      <Input 
+                        id="store-name" 
+                        value={storeName} 
+                        onChange={(e) => setStoreName(e.target.value)} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="store-phone">Phone Number</Label>
+                      <Input 
+                        id="store-phone" 
+                        value={storePhone} 
+                        onChange={(e) => setStorePhone(e.target.value)} 
+                      />
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Business Hours</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="weekday-hours">Weekday Hours</Label>
-                        <Input id="weekday-hours" defaultValue="9:00 AM - 8:00 PM" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="weekend-hours">Weekend Hours</Label>
-                        <Input id="weekend-hours" defaultValue="10:00 AM - 6:00 PM" />
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Switch id="closed-holidays" defaultChecked />
-                        <Label htmlFor="closed-holidays">Closed on National Holidays</Label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Switch id="lunch-break" defaultChecked />
-                        <Label htmlFor="lunch-break">Lunch Break (1:00 PM - 2:00 PM)</Label>
-                      </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="store-address">Address</Label>
+                    <Textarea 
+                      id="store-address" 
+                      value={storeAddress} 
+                      onChange={(e) => setStoreAddress(e.target.value)} 
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="store-email">Email</Label>
+                      <Input 
+                        id="store-email" 
+                        type="email" 
+                        value={storeEmail} 
+                        onChange={(e) => setStoreEmail(e.target.value)} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="store-gst">GST Number</Label>
+                      <Input 
+                        id="store-gst" 
+                        value={storeGST} 
+                        onChange={(e) => setStoreGST(e.target.value)} 
+                      />
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Regional Settings</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="currency">Currency</Label>
-                        <Select defaultValue="inr">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Currency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="inr">Indian Rupee (₹)</SelectItem>
-                            <SelectItem value="usd">US Dollar ($)</SelectItem>
-                            <SelectItem value="eur">Euro (€)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="tax-rate">Default Tax Rate (%)</Label>
-                        <Input id="tax-rate" defaultValue="18" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="language">Language</Label>
-                        <Select defaultValue="en">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Language" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="en">English</SelectItem>
-                            <SelectItem value="hi">Hindi</SelectItem>
-                            <SelectItem value="mr">Marathi</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="date-format">Date Format</Label>
-                        <Select defaultValue="dd-mm-yyyy">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Format" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="dd-mm-yyyy">DD-MM-YYYY</SelectItem>
-                            <SelectItem value="mm-dd-yyyy">MM-DD-YYYY</SelectItem>
-                            <SelectItem value="yyyy-mm-dd">YYYY-MM-DD</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="store-timezone">Timezone</Label>
+                    <Select defaultValue="asia-kolkata">
+                      <SelectTrigger id="store-timezone">
+                        <SelectValue placeholder="Select timezone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asia-kolkata">Asia/Kolkata (IST)</SelectItem>
+                        <SelectItem value="asia-dubai">Asia/Dubai (GST)</SelectItem>
+                        <SelectItem value="asia-singapore">Asia/Singapore (SGT)</SelectItem>
+                        <SelectItem value="europe-london">Europe/London (GMT)</SelectItem>
+                        <SelectItem value="america-new_york">America/New_York (EST)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  
-                  <Button className="gap-2" onClick={() => handleSave("General")}>
-                    <Save className="h-4 w-4" />
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" onClick={() => handleResetSettings("General")}>
+                    Reset
+                  </Button>
+                  <Button onClick={() => handleSaveSettings("General")}>
                     Save Changes
                   </Button>
-                </CardContent>
+                </CardFooter>
               </Card>
-            </TabsContent>
-            
-            <TabsContent value="users">
-              <Card>
+              
+              <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>User Access Settings</CardTitle>
-                  <CardDescription>Manage user permissions and access control</CardDescription>
+                  <CardTitle>Store Operations</CardTitle>
+                  <CardDescription>Configure your store's operation settings</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Access Control</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Store Managers</p>
-                          <p className="text-sm text-slate-500">Full access to all store functions</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Sales Staff</p>
-                          <p className="text-sm text-slate-500">Access to sales and inventory only</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Inventory Staff</p>
-                          <p className="text-sm text-slate-500">Access to inventory management</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Accountants</p>
-                          <p className="text-sm text-slate-500">Access to financial reports and transactions</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      </div>
-                    </div>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="store-hours">Business Hours</Label>
+                    <Select defaultValue="standard">
+                      <SelectTrigger id="store-hours">
+                        <SelectValue placeholder="Select business hours" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="standard">Standard (9:00 AM - 6:00 PM)</SelectItem>
+                        <SelectItem value="extended">Extended (8:00 AM - 9:00 PM)</SelectItem>
+                        <SelectItem value="weekend">Weekend (10:00 AM - 4:00 PM)</SelectItem>
+                        <SelectItem value="custom">Custom Hours</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Permission Settings</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Staff to Issue Refunds</p>
-                          <p className="text-sm text-slate-500">Enable staff to process refunds without manager approval</p>
-                        </div>
-                        <Switch id="allow-refunds" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Staff to Edit Prices</p>
-                          <p className="text-sm text-slate-500">Enable staff to modify product prices</p>
-                        </div>
-                        <Switch id="edit-prices" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Staff to View Reports</p>
-                          <p className="text-sm text-slate-500">Enable staff to access business reports</p>
-                        </div>
-                        <Switch id="view-reports" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Remote Access</p>
-                          <p className="text-sm text-slate-500">Enable access to the system from outside the store network</p>
-                        </div>
-                        <Switch id="remote-access" defaultChecked />
-                      </div>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="warehouse-sync">Warehouse Sync</Label>
+                      <p className="text-sm text-gray-500">Sync inventory with main warehouse</p>
                     </div>
+                    <Switch 
+                      id="warehouse-sync" 
+                      checked={warehouseSync}
+                      onCheckedChange={setWarehouseSync}
+                    />
                   </div>
                   
-                  <Button className="gap-2" onClick={() => handleSave("User Access")}>
-                    <Save className="h-4 w-4" />
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="stock-alerts">Stock Alerts</Label>
+                      <p className="text-sm text-gray-500">Enable low stock alerts</p>
+                    </div>
+                    <Switch 
+                      id="stock-alerts" 
+                      checked={stockAlerts}
+                      onCheckedChange={setStockAlerts}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" onClick={() => handleResetSettings("Operations")}>
+                    Reset
+                  </Button>
+                  <Button onClick={() => handleSaveSettings("Operations")}>
                     Save Changes
                   </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="notifications">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Notification Settings</CardTitle>
-                  <CardDescription>Configure how and when you receive notifications</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Email Notifications</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Daily Sales Summary</p>
-                          <p className="text-sm text-slate-500">Receive daily summary of sales activities</p>
-                        </div>
-                        <Switch id="daily-sales" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Low Stock Alerts</p>
-                          <p className="text-sm text-slate-500">Notify when inventory items reach low stock levels</p>
-                        </div>
-                        <Switch id="low-stock" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Customer Complaints</p>
-                          <p className="text-sm text-slate-500">Notify when a customer registers a complaint</p>
-                        </div>
-                        <Switch id="customer-complaints" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">New Orders</p>
-                          <p className="text-sm text-slate-500">Notify when new orders are placed</p>
-                        </div>
-                        <Switch id="new-orders" defaultChecked />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">System Notifications</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Stock Updates</p>
-                          <p className="text-sm text-slate-500">Show notifications for inventory changes</p>
-                        </div>
-                        <Switch id="stock-updates" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Payment Confirmations</p>
-                          <p className="text-sm text-slate-500">Show notifications for payment events</p>
-                        </div>
-                        <Switch id="payment-confirmations" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">System Updates</p>
-                          <p className="text-sm text-slate-500">Notify about system updates and maintenance</p>
-                        </div>
-                        <Switch id="system-updates" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Staff Activity</p>
-                          <p className="text-sm text-slate-500">Notify about staff logins and important actions</p>
-                        </div>
-                        <Switch id="staff-activity" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button className="gap-2" onClick={() => handleSave("Notifications")}>
-                    <Save className="h-4 w-4" />
-                    Save Changes
-                  </Button>
-                </CardContent>
+                </CardFooter>
               </Card>
             </TabsContent>
             
@@ -431,300 +273,420 @@ const StoreSettings = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Billing Settings</CardTitle>
-                  <CardDescription>Configure invoice, payment, and receipt settings</CardDescription>
+                  <CardDescription>Configure billing preferences and payment options</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tax-rate">Default Tax Rate (%)</Label>
+                      <Input 
+                        id="tax-rate" 
+                        type="number" 
+                        value={taxRate} 
+                        onChange={(e) => setTaxRate(e.target.value)} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="currency-format">Currency Format</Label>
+                      <Select value={currencyFormat} onValueChange={setCurrencyFormat}>
+                        <SelectTrigger id="currency-format">
+                          <SelectValue placeholder="Select currency format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="inr">Indian Rupee (₹)</SelectItem>
+                          <SelectItem value="usd">US Dollar ($)</SelectItem>
+                          <SelectItem value="eur">Euro (€)</SelectItem>
+                          <SelectItem value="gbp">British Pound (£)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="receipt-template">Receipt Template</Label>
+                    <Select value={receiptTemplate} onValueChange={setReceiptTemplate}>
+                      <SelectTrigger id="receipt-template">
+                        <SelectValue placeholder="Select receipt template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="detailed">Detailed</SelectItem>
+                        <SelectItem value="minimal">Minimal</SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Invoice Settings</h3>
-                    
+                    <Label>Available Payment Methods</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="invoice-prefix">Invoice Number Prefix</Label>
-                        <Input id="invoice-prefix" defaultValue="INV-" />
+                      <div className="flex items-center space-x-2">
+                        <input type="checkbox" id="payment-cash" className="rounded" defaultChecked />
+                        <Label htmlFor="payment-cash">Cash</Label>
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="invoice-start">Next Invoice Number</Label>
-                        <Input id="invoice-start" defaultValue="2025-0123" />
+                      <div className="flex items-center space-x-2">
+                        <input type="checkbox" id="payment-card" className="rounded" defaultChecked />
+                        <Label htmlFor="payment-card">Card</Label>
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="terms">Default Terms & Conditions</Label>
-                        <Input id="terms" defaultValue="Payment due within 30 days" />
+                      <div className="flex items-center space-x-2">
+                        <input type="checkbox" id="payment-upi" className="rounded" defaultChecked />
+                        <Label htmlFor="payment-upi">UPI</Label>
                       </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="invoice-notes">Default Invoice Notes</Label>
-                        <Input id="invoice-notes" defaultValue="Thank you for your business" />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Include GSTIN on Invoice</p>
-                        <p className="text-sm text-slate-500">Display your GSTIN number on all invoices</p>
-                      </div>
-                      <Switch id="gstin-display" defaultChecked />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Show HSN Codes</p>
-                        <p className="text-sm text-slate-500">Display HSN codes for all products on invoices</p>
-                      </div>
-                      <Switch id="hsn-codes" defaultChecked />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Payment Settings</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="payment-methods">Accepted Payment Methods</Label>
-                          <Select defaultValue="all">
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Methods" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All Methods</SelectItem>
-                              <SelectItem value="card-cash">Card & Cash Only</SelectItem>
-                              <SelectItem value="digital">Digital Payments Only</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="payment-gateway">Default Payment Gateway</Label>
-                          <Select defaultValue="razorpay">
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Gateway" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="razorpay">Razorpay</SelectItem>
-                              <SelectItem value="paytm">Paytm</SelectItem>
-                              <SelectItem value="gpay">Google Pay</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Partial Payments</p>
-                          <p className="text-sm text-slate-500">Enable customers to make partial payments</p>
-                        </div>
-                        <Switch id="partial-payments" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Allow Credit Sales</p>
-                          <p className="text-sm text-slate-500">Enable sales on credit with payment terms</p>
-                        </div>
-                        <Switch id="credit-sales" defaultChecked />
+                      <div className="flex items-center space-x-2">
+                        <input type="checkbox" id="payment-credit" className="rounded" defaultChecked />
+                        <Label htmlFor="payment-credit">Store Credit</Label>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Receipt Settings</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="receipt-printer">Default Receipt Printer</Label>
-                        <Select defaultValue="thermal">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Printer" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="thermal">Thermal Printer</SelectItem>
-                            <SelectItem value="laser">Laser Printer</SelectItem>
-                            <SelectItem value="none">Digital Only (No Print)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="receipt-size">Receipt Paper Size</Label>
-                        <Select defaultValue="80mm">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="80mm">80mm (Standard)</SelectItem>
-                            <SelectItem value="58mm">58mm (Compact)</SelectItem>
-                            <SelectItem value="a4">A4 Paper</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="send-receipts">Email Receipts</Label>
+                      <p className="text-sm text-gray-500">Send receipts to customers via email</p>
                     </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Print Receipt Automatically</p>
-                        <p className="text-sm text-slate-500">Automatically print receipts after each sale</p>
-                      </div>
-                      <Switch id="auto-print" defaultChecked />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Include Store Logo on Receipt</p>
-                        <p className="text-sm text-slate-500">Print your store logo at the top of each receipt</p>
-                      </div>
-                      <Switch id="logo-receipt" defaultChecked />
-                    </div>
+                    <Switch 
+                      id="send-receipts" 
+                      checked={sendReceipts}
+                      onCheckedChange={setSendReceipts}
+                    />
                   </div>
-                  
-                  <Button className="gap-2" onClick={() => handleSave("Billing")}>
-                    <Save className="h-4 w-4" />
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" onClick={() => handleResetSettings("Billing")}>
+                    Reset
+                  </Button>
+                  <Button onClick={() => handleSaveSettings("Billing")}>
                     Save Changes
                   </Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="notifications">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notification Settings</CardTitle>
+                  <CardDescription>Configure alerts and communication preferences</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="email-notifications">Email Notifications</Label>
+                      <p className="text-sm text-gray-500">Send email notifications for important events</p>
+                    </div>
+                    <Switch id="email-notifications" defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="sms-notifications">SMS Notifications</Label>
+                      <p className="text-sm text-gray-500">Send SMS alerts to customers</p>
+                    </div>
+                    <Switch 
+                      id="sms-notifications" 
+                      checked={smsNotifications}
+                      onCheckedChange={setSmsNotifications}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="inventory-alerts">Inventory Alerts</Label>
+                      <p className="text-sm text-gray-500">Receive alerts for low stock</p>
+                    </div>
+                    <Switch id="inventory-alerts" defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="order-notifications">Order Updates</Label>
+                      <p className="text-sm text-gray-500">Notify customers about order status changes</p>
+                    </div>
+                    <Switch id="order-notifications" defaultChecked />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="low-stock-threshold">Low Stock Threshold</Label>
+                    <Select defaultValue="10">
+                      <SelectTrigger id="low-stock-threshold">
+                        <SelectValue placeholder="Select threshold" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5 units</SelectItem>
+                        <SelectItem value="10">10 units</SelectItem>
+                        <SelectItem value="15">15 units</SelectItem>
+                        <SelectItem value="20">20 units</SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" onClick={() => handleResetSettings("Notifications")}>
+                    Reset
+                  </Button>
+                  <Button onClick={() => handleSaveSettings("Notifications")}>
+                    Save Changes
+                  </Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="hardware">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Hardware Settings</CardTitle>
+                  <CardDescription>Configure printers, scanners, and other devices</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="printer-type">Receipt Printer</Label>
+                    <Select value={printerType} onValueChange={setPrinterType}>
+                      <SelectTrigger id="printer-type">
+                        <SelectValue placeholder="Select printer type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="thermal">Thermal Printer</SelectItem>
+                        <SelectItem value="dot-matrix">Dot Matrix Printer</SelectItem>
+                        <SelectItem value="inkjet">Inkjet Printer</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="barcode-scanner">Barcode Scanner</Label>
+                      <p className="text-sm text-gray-500">Enable barcode scanning for products</p>
+                    </div>
+                    <Switch 
+                      id="barcode-scanner" 
+                      checked={enableBarcodeScanner}
+                      onCheckedChange={setEnableBarcodeScanner}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="payment-terminal">Payment Terminal</Label>
+                    <Select defaultValue="pos">
+                      <SelectTrigger id="payment-terminal">
+                        <SelectValue placeholder="Select terminal type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pos">POS Terminal</SelectItem>
+                        <SelectItem value="mobile">Mobile Payment Device</SelectItem>
+                        <SelectItem value="integrated">Integrated System</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="cash-drawer">Cash Drawer</Label>
+                    <Select defaultValue="manual">
+                      <SelectTrigger id="cash-drawer">
+                        <SelectValue placeholder="Select drawer type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="manual">Manual</SelectItem>
+                        <SelectItem value="automatic">Automatic (Connected)</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="outline" onClick={() => handleResetSettings("Hardware")}>
+                    Reset
+                  </Button>
+                  <Button onClick={() => handleSaveSettings("Hardware")}>
+                    Save Changes
+                  </Button>
+                </CardFooter>
+              </Card>
+              
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Hardware Tools</CardTitle>
+                  <CardDescription>Test and configure your hardware devices</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" onClick={() => handleAction("Test Receipt Printer")}>
+                      <Printer className="h-6 w-6" />
+                      <span>Test Receipt Printer</span>
+                    </Button>
+                    
+                    <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" onClick={() => handleAction("Test Barcode Scanner")}>
+                      <QrCode className="h-6 w-6" />
+                      <span>Test Barcode Scanner</span>
+                    </Button>
+                    
+                    <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" onClick={() => handleAction("Test Payment Terminal")}>
+                      <Terminal className="h-6 w-6" />
+                      <span>Test Payment Terminal</span>
+                    </Button>
+                    
+                    <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2" onClick={() => handleAction("Test Cash Drawer")}>
+                      <Warehouse className="h-6 w-6" />
+                      <span>Test Cash Drawer</span>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
-            <TabsContent value="integrations">
+            <TabsContent value="advanced">
               <Card>
                 <CardHeader>
-                  <CardTitle>Integration Settings</CardTitle>
-                  <CardDescription>Connect with other systems and services</CardDescription>
+                  <CardTitle>Advanced Settings</CardTitle>
+                  <CardDescription>Security, backup, and advanced store configuration</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">API Integrations</h3>
+                <CardContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="user-management">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <User className="h-5 w-5" />
+                          <span>User Management</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 py-2">
+                          <Button variant="outline" className="w-full" onClick={() => handleAction("Manage Store Users")}>
+                            Manage Store Users
+                          </Button>
+                          <Button variant="outline" className="w-full" onClick={() => handleAction("Configure Permissions")}>
+                            Configure User Permissions
+                          </Button>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
                     
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Factory Inventory System</p>
-                          <p className="text-sm text-slate-500">Connect with central inventory management</p>
+                    <AccordionItem value="security">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-5 w-5" />
+                          <span>Security Settings</span>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Accounting Software</p>
-                          <p className="text-sm text-slate-500">Sync with accounting system</p>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 py-2">
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Two-Factor Authentication</Label>
+                              <p className="text-sm text-gray-500">Require 2FA for all users</p>
+                            </div>
+                            <Switch id="twofa" defaultChecked />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Activity Logging</Label>
+                              <p className="text-sm text-gray-500">Track all user activities</p>
+                            </div>
+                            <Switch id="activity-log" defaultChecked />
+                          </div>
+                          
+                          <Button variant="outline" className="w-full" onClick={() => handleAction("Security Audit")}>
+                            Run Security Audit
+                          </Button>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">E-commerce Platform</p>
-                          <p className="text-sm text-slate-500">Sync inventory with online store</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Logistics Partner API</p>
-                          <p className="text-sm text-slate-500">Connect with shipping partners</p>
-                        </div>
-                        <Badge variant="secondary">
-                          Configure
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Payment Gateway Integrations</h3>
+                      </AccordionContent>
+                    </AccordionItem>
                     
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Razorpay</p>
-                          <p className="text-sm text-slate-500">Online payment processing</p>
+                    <AccordionItem value="backup">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <Save className="h-5 w-5" />
+                          <span>Backup & Restore</span>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">PayTM</p>
-                          <p className="text-sm text-slate-500">Digital wallet and payments</p>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 py-2">
+                          <Button className="w-full" onClick={() => handleAction("Create Backup")}>
+                            Create Backup
+                          </Button>
+                          <div className="space-y-2">
+                            <Label>Backup Schedule</Label>
+                            <Select defaultValue="daily">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select backup frequency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                                <SelectItem value="manual">Manual Only</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">UPI Integration</p>
-                          <p className="text-sm text-slate-500">Direct UPI payment processing</p>
-                        </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Hardware Integrations</h3>
+                      </AccordionContent>
+                    </AccordionItem>
                     
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Receipt Printer</p>
-                          <p className="text-sm text-slate-500">Thermal printer configuration</p>
+                    <AccordionItem value="workflow">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <Workflow className="h-5 w-5" />
+                          <span>Workflow Configuration</span>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Barcode Scanner</p>
-                          <p className="text-sm text-slate-500">Scanner for inventory and checkout</p>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 py-2">
+                          <div className="space-y-2">
+                            <Label>Order Processing Workflow</Label>
+                            <Select defaultValue="standard">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select workflow" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="standard">Standard</SelectItem>
+                                <SelectItem value="expedited">Expedited</SelectItem>
+                                <SelectItem value="custom">Custom</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Auto-approve Orders</Label>
+                              <p className="text-sm text-gray-500">Automatically approve orders below ₹5,000</p>
+                            </div>
+                            <Switch id="auto-approve" defaultChecked />
+                          </div>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center justify-between py-2 border-b">
-                        <div>
-                          <p className="font-medium">Card Payment Terminal</p>
-                          <p className="text-sm text-slate-500">POS terminal for card payments</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                    
+                    <AccordionItem value="data">
+                      <AccordionTrigger className="hover:no-underline">
+                        <div className="flex items-center gap-2">
+                          <LayoutGrid className="h-5 w-5" />
+                          <span>Data Management</span>
                         </div>
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          <Check className="h-3 w-3 mr-1" />
-                          Connected
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button className="gap-2" onClick={() => handleSave("Integrations")}>
-                    <Save className="h-4 w-4" />
-                    Save Changes
-                  </Button>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4 py-2">
+                          <Button variant="outline" className="w-full" onClick={() => handleAction("Export Data")}>
+                            Export Store Data
+                          </Button>
+                          <Button variant="outline" className="w-full" onClick={() => handleAction("Import Data")}>
+                            Import Data
+                          </Button>
+                          <Button variant="outline" className="w-full text-red-600" onClick={() => handleAction("Clear Test Data")}>
+                            Clear Test Data
+                          </Button>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </CardContent>
+                <CardFooter className="flex justify-end">
+                  <Button onClick={() => handleSaveSettings("Advanced")}>
+                    Save All Settings
+                  </Button>
+                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>

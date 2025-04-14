@@ -3,18 +3,58 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import Sidebar from "@/components/dashboard/Sidebar";
-import { ShoppingBag, Clock, CheckCircle2, AlertCircle, Filter, Search, Package, Truck } from "lucide-react";
+import { 
+  ShoppingBag, 
+  Package, 
+  Truck, 
+  AlertCircle, 
+  CheckCircle2, 
+  Clock, 
+  Filter,
+  Plus,
+  Search,
+  ArrowUpDown,
+  Calendar,
+  MoreHorizontal,
+  FileText,
+  Printer,
+  Mail,
+  X
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { useToast } from "@/components/ui/use-toast";
 
 const StoreOrderManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const { toast } = useToast();
 
@@ -27,56 +67,121 @@ const StoreOrderManagement = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handleAction = (action: string) => {
+  const handleAction = (action: string, orderId?: string) => {
     toast({
       title: action,
-      description: `${action} operation initiated successfully.`,
+      description: orderId 
+        ? `${action} for order #${orderId}` 
+        : `${action} operation initiated.`,
     });
   };
 
-  // Sample order data
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Searching Orders",
+      description: `Searching for "${searchQuery}"`,
+    });
+  };
+
+  // Sample orders data
   const orders = [
     {
-      id: "ORD-2025-001",
-      customer: "Rajesh Kumar",
-      date: "13 Apr, 2025",
+      id: "ORD-2854",
+      customer: "Raj Kumar",
+      date: "12 Apr 2025",
       items: 5,
-      total: "₹4,250",
-      status: "Completed",
+      amount: "₹24,500",
+      status: "new",
+      paymentStatus: "pending"
     },
     {
-      id: "ORD-2025-002",
-      customer: "Anjali Singh",
-      date: "13 Apr, 2025",
+      id: "ORD-2853",
+      customer: "Priya Singh",
+      date: "10 Apr 2025",
       items: 3,
-      total: "₹2,800",
-      status: "Processing",
+      amount: "₹18,750",
+      status: "processing",
+      paymentStatus: "paid"
     },
     {
-      id: "ORD-2025-003",
+      id: "ORD-2852",
       customer: "Vikram Patel",
-      date: "12 Apr, 2025",
-      items: 8,
-      total: "₹7,500",
-      status: "Processing",
+      date: "08 Apr 2025",
+      items: 7,
+      amount: "₹32,250",
+      status: "ready",
+      paymentStatus: "paid"
     },
     {
-      id: "ORD-2025-004",
-      customer: "Aisha Khan",
-      date: "12 Apr, 2025",
+      id: "ORD-2851",
+      customer: "Anita Sharma",
+      date: "05 Apr 2025",
       items: 2,
-      total: "₹1,200",
-      status: "Pending Payment",
+      amount: "₹15,800",
+      status: "delivered",
+      paymentStatus: "paid"
     },
     {
-      id: "ORD-2025-005",
-      customer: "Suresh Mehta",
-      date: "11 Apr, 2025",
+      id: "ORD-2850",
+      customer: "Sanjay Mehta",
+      date: "03 Apr 2025",
       items: 4,
-      total: "₹3,800",
-      status: "Completed",
+      amount: "₹22,450",
+      status: "delivered",
+      paymentStatus: "paid"
     },
+    {
+      id: "ORD-2849",
+      customer: "Divya Gupta",
+      date: "01 Apr 2025",
+      items: 6,
+      amount: "₹28,900",
+      status: "cancelled",
+      paymentStatus: "refunded"
+    }
   ];
+
+  // Filter orders based on status
+  const filteredOrders = filterStatus === "all" 
+    ? orders 
+    : orders.filter(order => order.status === filterStatus);
+
+  // Status badge renderer
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { color: string, label: string }> = {
+      new: { color: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300", label: "New" },
+      processing: { color: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300", label: "Processing" },
+      ready: { color: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300", label: "Ready for Pickup" },
+      delivered: { color: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300", label: "Delivered" },
+      cancelled: { color: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300", label: "Cancelled" }
+    };
+
+    const config = statusConfig[status] || statusConfig.new;
+    
+    return (
+      <Badge className={config.color}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  // Payment status badge renderer
+  const getPaymentBadge = (status: string) => {
+    const statusConfig: Record<string, { color: string, label: string }> = {
+      paid: { color: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300", label: "Paid" },
+      pending: { color: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300", label: "Pending" },
+      refunded: { color: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300", label: "Refunded" }
+    };
+
+    const config = statusConfig[status] || statusConfig.pending;
+    
+    return (
+      <Badge variant="outline" className={config.color}>
+        {config.label}
+      </Badge>
+    );
+  };
 
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900">
@@ -91,385 +196,222 @@ const StoreOrderManagement = () => {
               <ShoppingBag className="h-6 w-6 text-unnati-primary" />
               Order Management
             </h1>
-            <p className="text-slate-500 dark:text-slate-400">Manage and track customer orders</p>
+            <p className="text-slate-500 dark:text-slate-400">Track, process, and manage customer orders</p>
           </div>
           
-          {/* Search and Filters */}
+          {/* Order Actions */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
-            <SearchBar placeholder="Search orders..." dashboardType="store" />
+            <div className="w-full md:w-auto flex-1">
+              <form onSubmit={handleSearch} className="flex w-full max-w-lg items-center space-x-2">
+                <Input
+                  type="text"
+                  placeholder="Search orders by ID, customer, or amount..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1"
+                />
+                <Button type="submit" className="gap-2">
+                  <Search className="h-4 w-4" />
+                  Search
+                </Button>
+              </form>
+            </div>
             
             <div className="flex flex-wrap gap-2">
               <Button 
-                variant="outline" 
-                className="gap-2"
-                onClick={() => handleAction("Filter Orders")}
-              >
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
-              <Button 
-                className="gap-2 bg-unnati-primary hover:bg-unnati-primary/90"
+                className="gap-2 bg-unnati-primary hover:bg-unnati-primary/90" 
                 onClick={() => handleAction("Create New Order")}
               >
-                <ShoppingBag className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 New Order
+              </Button>
+              <Select 
+                value={filterStatus} 
+                onValueChange={setFilterStatus}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="ready">Ready for Pickup</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => handleAction("Export Orders")}
+              >
+                <FileText className="h-4 w-4" />
+                Export
               </Button>
             </div>
           </div>
           
-          <Tabs defaultValue="all" className="mb-6">
-            <TabsList>
-              <TabsTrigger value="all">All Orders</TabsTrigger>
-              <TabsTrigger value="processing">Processing</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-            </TabsList>
+          {/* Order Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">New Orders</p>
+                  <p className="text-2xl font-bold">12</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <ShoppingBag className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+              </CardContent>
+            </Card>
             
-            <TabsContent value="all">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>All Orders</CardTitle>
-                  <CardDescription>Manage all customer orders</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[120px]">Order ID</TableHead>
-                          <TableHead>Customer</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Items</TableHead>
-                          <TableHead>Total</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders.map((order) => (
-                          <TableRow key={order.id}>
-                            <TableCell className="font-medium">{order.id}</TableCell>
-                            <TableCell>{order.customer}</TableCell>
-                            <TableCell>{order.date}</TableCell>
-                            <TableCell>{order.items}</TableCell>
-                            <TableCell>{order.total}</TableCell>
-                            <TableCell>
-                              <Badge 
-                                variant={
-                                  order.status === "Completed" ? "outline" : 
-                                  order.status === "Processing" ? "secondary" : 
-                                  "destructive"
-                                }
-                              >
-                                {order.status === "Completed" && (
-                                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                                )}
-                                {order.status === "Processing" && (
-                                  <Clock className="h-3 w-3 mr-1" />
-                                )}
-                                {order.status === "Pending Payment" && (
-                                  <AlertCircle className="h-3 w-3 mr-1" />
-                                )}
-                                {order.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => handleAction(`View order ${order.id}`)}
-                              >
-                                View
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Processing</p>
+                  <p className="text-2xl font-bold">8</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Ready for Pickup</p>
+                  <p className="text-2xl font-bold">5</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                  <Package className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Delivered Today</p>
+                  <p className="text-2xl font-bold">14</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Orders Table */}
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle>Recent Orders</CardTitle>
+              <CardDescription>Manage and process customer orders</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[120px]">Order ID</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Items</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Payment</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.id}</TableCell>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>{order.date}</TableCell>
+                        <TableCell>{order.items}</TableCell>
+                        <TableCell>{order.amount}</TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell>{getPaymentBadge(order.paymentStatus)}</TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
                               </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="processing">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Processing Orders</CardTitle>
-                  <CardDescription>Orders currently being processed</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[120px]">Order ID</TableHead>
-                          <TableHead>Customer</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Items</TableHead>
-                          <TableHead>Total</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders
-                          .filter(order => order.status === "Processing")
-                          .map((order) => (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-medium">{order.id}</TableCell>
-                              <TableCell>{order.customer}</TableCell>
-                              <TableCell>{order.date}</TableCell>
-                              <TableCell>{order.items}</TableCell>
-                              <TableCell>{order.total}</TableCell>
-                              <TableCell>
-                                <Badge variant="secondary">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  {order.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => handleAction(`View order ${order.id}`)}
-                                  >
-                                    View
-                                  </Button>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => handleAction(`Mark order ${order.id} as complete`)}
-                                  >
-                                    Complete
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="completed">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Completed Orders</CardTitle>
-                  <CardDescription>Successfully completed orders</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[120px]">Order ID</TableHead>
-                          <TableHead>Customer</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Items</TableHead>
-                          <TableHead>Total</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders
-                          .filter(order => order.status === "Completed")
-                          .map((order) => (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-medium">{order.id}</TableCell>
-                              <TableCell>{order.customer}</TableCell>
-                              <TableCell>{order.date}</TableCell>
-                              <TableCell>{order.items}</TableCell>
-                              <TableCell>{order.total}</TableCell>
-                              <TableCell>
-                                <Badge variant="outline">
-                                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  {order.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleAction(`View order ${order.id}`)}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => handleAction("View Details", order.id)}>
+                                <Search className="mr-2 h-4 w-4" />
+                                <span>View Details</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleAction("Print Invoice", order.id)}>
+                                <Printer className="mr-2 h-4 w-4" />
+                                <span>Print Invoice</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleAction("Send to Customer", order.id)}>
+                                <Mail className="mr-2 h-4 w-4" />
+                                <span>Email Customer</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              {order.status !== "cancelled" && (
+                                <DropdownMenuItem 
+                                  onClick={() => handleAction("Cancel Order", order.id)}
+                                  className="text-red-600 dark:text-red-400"
                                 >
-                                  View
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="pending">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Pending Orders</CardTitle>
-                  <CardDescription>Orders awaiting payment or confirmation</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[120px]">Order ID</TableHead>
-                          <TableHead>Customer</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Items</TableHead>
-                          <TableHead>Total</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders
-                          .filter(order => order.status === "Pending Payment")
-                          .map((order) => (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-medium">{order.id}</TableCell>
-                              <TableCell>{order.customer}</TableCell>
-                              <TableCell>{order.date}</TableCell>
-                              <TableCell>{order.items}</TableCell>
-                              <TableCell>{order.total}</TableCell>
-                              <TableCell>
-                                <Badge variant="destructive">
-                                  <AlertCircle className="h-3 w-3 mr-1" />
-                                  {order.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => handleAction(`Process payment for ${order.id}`)}
-                                  >
-                                    Process Payment
-                                  </Button>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => handleAction(`Cancel order ${order.id}`)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                                  <X className="mr-2 h-4 w-4" />
+                                  <span>Cancel Order</span>
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
           
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Delivery Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Package className="h-5 w-5 text-unnati-primary" />
-                      <span>Orders to Pack</span>
-                    </div>
-                    <Badge variant="secondary">8</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Truck className="h-5 w-5 text-unnati-purple" />
-                      <span>Ready for Delivery</span>
-                    </div>
-                    <Badge variant="secondary">5</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                      <span>Delivered Today</span>
-                    </div>
-                    <Badge variant="secondary">3</Badge>
-                  </div>
-                </div>
-                <Button className="w-full mt-4" variant="outline" onClick={() => handleAction("View All Deliveries")}>
-                  View All Deliveries
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Order Issues</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <AlertCircle className="h-5 w-5 text-red-500" />
-                      <span>Payment Failed</span>
-                    </div>
-                    <Badge variant="destructive">2</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-amber-500" />
-                      <span>Delayed Orders</span>
-                    </div>
-                    <Badge variant="secondary">1</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <AlertCircle className="h-5 w-5 text-amber-500" />
-                      <span>Requires Attention</span>
-                    </div>
-                    <Badge variant="secondary">3</Badge>
-                  </div>
-                </div>
-                <Button className="w-full mt-4" variant="outline" onClick={() => handleAction("Resolve Issues")}>
-                  Resolve Issues
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Today's Orders</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-6">
-                  <p className="text-4xl font-bold text-unnati-primary">12</p>
-                  <p className="text-sm text-slate-500 mt-1">Orders Received Today</p>
-                  <div className="mt-4 flex justify-center gap-2">
-                    <div className="text-center">
-                      <p className="text-xl font-bold text-green-600">7</p>
-                      <p className="text-xs text-slate-500">Completed</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xl font-bold text-amber-500">3</p>
-                      <p className="text-xs text-slate-500">Processing</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xl font-bold text-red-500">2</p>
-                      <p className="text-xs text-slate-500">Pending</p>
-                    </div>
-                  </div>
-                </div>
-                <Button className="w-full" variant="outline" onClick={() => handleAction("View Today's Orders")}>
-                  View Today's Orders
-                </Button>
-              </CardContent>
-            </Card>
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="border-2 border-dashed hover:border-unnati-primary hover:bg-unnati-primary/5 transition-all cursor-pointer" onClick={() => handleAction("Process Pending Orders")}>
+                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                  <Clock className="h-10 w-10 text-unnati-primary mb-3" />
+                  <h3 className="font-medium">Process Pending</h3>
+                  <p className="text-sm text-slate-500 mt-1">Process pending orders</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-2 border-dashed hover:border-unnati-primary hover:bg-unnati-primary/5 transition-all cursor-pointer" onClick={() => handleAction("Update Order Status")}>
+                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                  <ArrowUpDown className="h-10 w-10 text-unnati-primary mb-3" />
+                  <h3 className="font-medium">Update Status</h3>
+                  <p className="text-sm text-slate-500 mt-1">Change order status</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-2 border-dashed hover:border-unnati-primary hover:bg-unnati-primary/5 transition-all cursor-pointer" onClick={() => handleAction("Manage Shipping")}>
+                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                  <Truck className="h-10 w-10 text-unnati-primary mb-3" />
+                  <h3 className="font-medium">Manage Shipping</h3>
+                  <p className="text-sm text-slate-500 mt-1">Handle delivery logistics</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-2 border-dashed hover:border-unnati-primary hover:bg-unnati-primary/5 transition-all cursor-pointer" onClick={() => handleAction("View Order Calendar")}>
+                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                  <Calendar className="h-10 w-10 text-unnati-primary mb-3" />
+                  <h3 className="font-medium">Order Calendar</h3>
+                  <p className="text-sm text-slate-500 mt-1">View delivery schedule</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </main>
       </div>

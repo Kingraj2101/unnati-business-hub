@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 202 100% 40%;  /* Unnati blue - adjusted from logo */
+    --primary: 210 100% 56%;  /* Bright Blue from logo - #1E90FF */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 27 100% 55%;  /* Unnati gold - adjusted from logo */
+    --secondary: 43 74% 49%;  /* Gold from logo - #daa520 */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 221 83% 53%;  /* Accent blue from logo */
+    --accent: 225 75% 60%;  /* Royal Blue accent - #4169e1 */
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,47 +31,40 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 202 100% 40%;  /* Match primary */
+    --ring: 210 100% 56%;  /* Match primary blue */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 30% 15%;  /* Dark navy blue like the logo background */
-
+    --sidebar-background: 231 40% 8%;  /* Dark navy - #0a0c1b */
     --sidebar-foreground: 240 5.3% 96.1%;
-
-    --sidebar-primary: 202 100% 40%;  /* Unnati blue */
-
+    --sidebar-primary: 210 100% 56%;  /* Matching logo blue */
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 20%;  /* Darker accent for sidebar */
-
+    --sidebar-accent: 240 4.8% 20%;
     --sidebar-accent-foreground: 240 5.9% 95%;
-
-    --sidebar-border: 220 13% 25%;  /* Darker border for sidebar */
-
+    --sidebar-border: 231 28% 15%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 231 40% 8%;  /* Dark navy - #0a0c1b */
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 231 35% 12%;      /* Slightly lighter than background */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 231 35% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 202 100% 40%;  /* Unnati blue */
+    --primary: 210 100% 56%;  /* Blue from logo - #1E90FF */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 27 100% 55%;  /* Unnati gold */
+    --secondary: 43 74% 49%;  /* Gold from logo - #daa520 */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 221 83% 53%;  /* Accent blue */
+    --accent: 225 75% 60%;  /* Royal Blue accent */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
@@ -79,16 +72,16 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 202 100% 40%;  /* Match primary */
+    --ring: 210 100% 56%;  /* Match primary blue */
     
-    --sidebar-background: 220 30% 10%;  /* Even darker navy for dark mode */
+    --sidebar-background: 231 45% 6%;  /* Even darker navy for dark mode */
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 202 100% 40%;  /* Unnati blue */
+    --sidebar-primary: 210 100% 56%;  /* Blue from logo */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 202 100% 50%;  /* Brighter in dark mode */
+    --sidebar-ring: 210 100% 65%;  /* Brighter in dark mode */
   }
 }
 
@@ -104,7 +97,11 @@
 
 /* Unnati Custom Styles */
 .unnati-gradient-bg {
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  background: linear-gradient(135deg, #1E90FF, #4169e1);
+}
+
+.unnati-gold-gradient {
+  background: linear-gradient(135deg, #daa520, #ffd700);
 }
 
 .unnati-card-gradient {
@@ -112,10 +109,23 @@
 }
 
 .dark .unnati-card-gradient {
-  background: linear-gradient(to right, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.7));
+  background: linear-gradient(to right, rgba(10, 12, 27, 0.7), rgba(15, 20, 42, 0.7));
 }
 
 .unnati-gold-text {
-  color: hsl(var(--secondary));
+  color: #daa520;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.glass-effect {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(30, 144, 255, 0.7), 0 0 20px rgba(30, 144, 255, 0.5);
+}
+
+.gold-glow {
+  text-shadow: 0 0 10px rgba(218, 165, 32, 0.7), 0 0 20px rgba(218, 165, 32, 0.5);
 }

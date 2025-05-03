@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				unnati: {
-					primary: '#0080c9', // Blue from logo
+					primary: '#1E90FF', // Bright blue from logo
 					secondary: '#daa520', // Gold from logo
 					accent: '#4169e1', // Royal blue accent 
 					orange: '#ff7f50', // Orange accent for highlights
 					purple: '#8a2be2', // Purple accent from logo
-					dark: '#192339',  // Dark navy from logo background
+					dark: '#0a0c1b',  // Dark navy background matching new design
 					muted: '#f3f4f6', // Light gray
 					silver: '#d1d5db'  // Silver/gray for text
 				}
@@ -103,6 +103,10 @@ export default {
 				'slide-in': {
 					'0%': { transform: 'translateX(-10px)', opacity: '0' },
 					'100%': { transform: 'translateX(0)', opacity: '1' }
+				},
+				'glow': {
+					'0%, 100%': { opacity: '0.8' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
@@ -110,6 +114,7 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'slide-in': 'slide-in 0.3s ease-out',
+				'glow': 'glow 2s ease-in-out infinite',
 			}
 		}
 	},
